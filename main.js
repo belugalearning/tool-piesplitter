@@ -19,37 +19,45 @@ define(['pie', 'exports', 'cocos2d', 'toollayer', 'qlayer'], function(Pie, expor
 
 			this.setTouchEnabled(true);
 
-            this.size = cc.Director.getInstance().getWinSize();
-            var size = this.size;
+                  this.size = cc.Director.getInstance().getWinSize();
+                  var size = this.size;
 
-            var clc = cc.Layer.create();
-            var background = new cc.Sprite();
-            background.initWithFile(window.bl.getResource('images_deep_water_background'));
-            background.setPosition(size.width/2, size.height/2);
-            clc.addChild(background);
-            this.addChild(clc,0);
+                  var clc = cc.Layer.create();
+                  var background = new cc.Sprite();
+                  background.initWithFile(window.bl.getResource('images_deep_water_background'));
+                  background.setPosition(size.width/2, size.height/2);
+                  clc.addChild(background);
+                  this.addChild(clc,0);
 
-            this.dividend = 3;
-            this.divisor = 4;
+                  this.dividend = 3;
+                  this.divisor = 4;
 
-/*            this.fullBubbles = [];
+                  this.pie = new Pie();
+                  this.pie.setPosition(size.width/2, size.height/2);
+                  this.addChild(this.pie);
 
-            for (var i = 0; i < this.dividend; i++) {
-            	var bubble = new cc.Sprite();
-            	bubble.initWithFile(window.bl.getResource('expanded_slice1'));
-            	bubble.setPosition(300 + 200 * i, 500);
-            	this.addChild(bubble);
-            };*/
+                  var splitMenu = cc.Menu.create();
+                  this.addChild(splitMenu);
 
-            var pie = new Pie();
-            pie.setPosition(size.width/2, size.height/2);
-            this.addChild(pie);
+                  var split = cc.MenuItemFont.create("Split!", this.split, this);
+                  split.setPosition(400, 0);
+                  splitMenu.addChild(split);
 
-            return this;
+                  return this;
 
-		},
+            },
 
-	});
+            split:function() {
+                  this.pie.split();
+            },
+
+            onTouchesBegan:function(touches, event) {
+                  var touch = touches[0];
+                  var touchLocation = this.convertTouchToNodeSpace(touch);
+                  this.pie.processTouch(touchLocation);
+            },
+
+      });
 
 	exports.ToolLayer = Tool;
 
