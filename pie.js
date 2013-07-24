@@ -25,7 +25,6 @@ define(['piepiece'], function(PiePiece) {
 
 		split:function() {
 			this.piePieceNode.removeAllChildren();
-			this.numberOfPieces = 20;
 			for (var i = 1; i <= this.numberOfPieces; i++) {
 				var piePiece = new PiePiece();
 				piePiece.setPiePiece(i, this.numberOfPieces);
@@ -55,6 +54,12 @@ define(['piepiece'], function(PiePiece) {
 				};
 			};
 			return pieceSelected;
+		},
+
+		removeSelectedPiePiece:function() {
+			this.selectedPiece.removeFromParent();
+			var selectedPieceIndex = this.piePieces.indexOf(this.selectedPiece);
+			this.piePieces.splice(selectedPieceIndex, 1);
 		},
 
 	})
