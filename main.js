@@ -5,11 +5,12 @@ require.config({
             'pie': '../../tools/piesplitter/pie',
             'piepiece': '../../tools/piesplitter/pie-piece',
             'movingpiepiece': '../../tools/piesplitter/moving-pie-piece',
+            'piesource': '../../tools/piesplitter/pie-source',
             'piehole': '../../tools/piesplitter/pie-hole'
 	}
 });
 
-define(['pie', 'piepiece', 'movingpiepiece', 'piehole', 'exports', 'cocos2d', 'toollayer', 'qlayer'], function(Pie, PiePiece, MovingPiePiece, PieHole, exports, cocos2d, ToolLayer, QLayer) {
+define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'exports', 'cocos2d', 'toollayer', 'qlayer'], function(Pie, PiePiece, MovingPiePiece, PieSource, PieHole, exports, cocos2d, ToolLayer, QLayer) {
 	'use strict';
 
 	window.bl.toolTag = 'piesplitter';
@@ -31,31 +32,36 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piehole', 'exports', 'cocos2d', 't
                   clc.addChild(background);
                   this.addChild(clc,0);
 
-                  this.dividend = 3;
+                  this.dividend = 5;
                   this.divisor = 4;
 
                   this.movingPiePiece = null;
                   this.selectedPie = null;
+                  this.splitted = false;
 
-                  this.pies = [];
+                  this.pieSources = [];
                   for (var i = 0; i < this.dividend; i++) {
-                        var pie = new Pie();
-                        pie.setPosition(150 + size.width * i/this.dividend, size.height * 2/3);
-                        pie.numberOfPieces = this.divisor;
-                        this.pies.push(pie);
-                        this.addChild(pie);
+                        var pieSource = new PieSource();
+                        pieSource.setPosition(50 + size.width * i/this.dividend, size.height * 2/3);
+                        pieSource.numberOfPieces = this.divisor;
+                        this.pieSources.push(pieSource);
+                        this.addChild(pieSource);
                   };
 
-/*                  this.pie = new Pie();
-                  this.pie.setPosition(size.width * 1/3, size.height/2);
-                  this.pie.numberOfPieces = this.divisor;
-                  this.addChild(this.pie);
-*/
-                  this.pieHole = new PieHole();
+                  this.pieHoles = [];
+                  for (var i = 0; i < this.divisor; i++) {
+                        var pieHole = new PieHole();
+                        pieHole.setPosition(50 + size.width * i/this.divisor, size.height * 1/3);
+                        pieHole.numberOfPieces = this.divisor;
+                        this.pieHoles.push(pieHole);
+                        this.addChild(pieHole);
+                  };
+
+/*                  this.pieHole = new PieHole();
                   this.pieHole.setPosition(size.width * 1/2, size.height * 1/3);
                   this.pieHole.fraction = this.divisor;
                   this.addChild(this.pieHole);
-
+*/
                   var splitMenu = cc.Menu.create();
                   this.addChild(splitMenu);
 
@@ -67,17 +73,25 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piehole', 'exports', 'cocos2d', 't
 
             },
 
+            pies:function() {
+                  return this.pieSources.concat(this.pieHoles);
+            },
+
             split:function() {
-                  for (var i = 0; i < this.pies.length; i++) {
-                        this.pies[i].split();
+                  if (!this.splitted) {
+                        for (var i = 0; i < this.pieSources.length; i++) {
+                              this.pieSources[i].split();
+                        };
+                        this.splitted = true;
                   };
             },
 
             onTouchesBegan:function(touches, event) {
                   var touch = touches[0];
                   var touchLocation = this.convertTouchToNodeSpace(touch);
-                  for (var i = 0; i < this.pies.length; i++) {
-                        var pie = this.pies[i];
+                  var pies = this.pies();
+                  for (var i = 0; i < pies.length; i++) {
+                        var pie = pies[i];
                         var selectedPiece = pie.processTouch(touchLocation);
                         if (selectedPiece !== null) {
                               this.movingPiePiece = new MovingPiePiece();
@@ -104,10 +118,19 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piehole', 'exports', 'cocos2d', 't
                         var touchLocation = this.convertTouchToNodeSpace(touch);
                         if (this.movingPiePiece !== null) {
                               this.movingPiePiece.removeFromParent();
-                              if (this.pieHole.cover.touched(touchLocation)) {
-                                    this.pieHole.addPiePiece(this.movingPiePiece.fraction);
-                                    this.selectedPie.removeSelectedPiePiece();
-                              } else {
+                              var droppedInPieHole = false;
+                              var pies = this.pies();
+                              for (var i = 0; i < pies.length; i++) {
+                                    var pie = pies[i];
+                                    if (pie.pieCover.touched(touchLocation)) {
+                                          if (pie.addPiePiece(this.movingPiePiece.fraction)) {
+                                                this.selectedPie.removeSelectedPiePiece();
+                                                droppedInPieHole = true;
+                                          };
+                                          break;
+                                    }
+                              };
+                              if (!droppedInPieHole) {
                                     this.selectedPie.selectedPiece.setVisible(true);
                               };
                               this.movingPiePiece = null;

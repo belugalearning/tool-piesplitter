@@ -1,25 +1,31 @@
-define(['piepiece'], function(PiePiece) {
+define(['pie', 'piepiece'], function(Pie, PiePiece) {
 	'use strict';
 
-	var PieHole = cc.Node.extend({
+	var PieHole = Pie.extend({
+		pieCoverFilename:'big_bubble',
+
 		ctor:function() {
 			this._super();
 
-			this.fraction;
+			this.miniPies = [];
+		},
 
-			this.piePieces = [];
-
-			this.cover = new cc.Sprite();
-			this.cover.initWithFile(window.bl.getResource('big_bubble'));
-			this.cover.setZOrder(1);
-			this.addChild(this.cover);
+		addMiniPie:function() {
+			var miniPie = new cc.Sprite();
+			miniPie.initWithFile(window.bl.getResource('small_bubble'));
+			miniPie.setPosition(0, -(this.miniPies.length + 1) * 30);
+			this.miniPies.push(miniPie);
+			this.addChild(miniPie);
 		},
 
 		addPiePiece:function() {
-			var piePiece = new PiePiece();
-			piePiece.setPiePiece(this.piePieces.length + 1, this.fraction);
-			this.addChild(piePiece);
-			this.piePieces.push(piePiece);
+			if (!this.roomForOneMore()) {
+				this.piePieceNode.removeAllChildren();
+				this.piePieces = [];
+				this.addMiniPie();
+			};
+			this._super();
+			return true;
 		},
 	})
 

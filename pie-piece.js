@@ -24,7 +24,6 @@ define(['canvasclippingnode'], function(CanvasClippingNode) {
 				this.ctx.rect(piePieceBox.origin.x, piePieceBox.origin.y, piePieceBox.size.width, piePieceBox.size.height);
 			}
 			this.clippingNode.addChild(this.piePieceBackground);
-			// this.setPiePiece(1,3);
 		},
 
 		setPiePiece:function(section, fraction) {
@@ -33,7 +32,7 @@ define(['canvasclippingnode'], function(CanvasClippingNode) {
 			this.startAngle = (section - 1)/fraction * Math.PI * 2;
 			this.endAngle = section/fraction * Math.PI * 2;
 			var angle
-			var innerPoint = this.pointAwayFromCentre(fraction/3, -Math.PI/2);
+			var innerPoint = this.pointAwayFromCentre(fraction/4, -Math.PI/2);
 
 			var self = this;
 			this.clippingNode.drawPathToClip = function() {

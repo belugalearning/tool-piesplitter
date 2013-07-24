@@ -9,35 +9,23 @@ define(['piepiece'], function(PiePiece) {
 			this.numberOfPieces;
 			this.selectedPiece = null;
 
-			this.piePieceCover = new cc.Sprite();
-			this.piePieceCover.initWithFile(window.bl.getResource('pie_cover'));
-			this.piePieceCover.setPosition(0, -5);
-			this.piePieceCover.setZOrder(1);
-			this.addChild(this.piePieceCover);
+			this.pieCover = new cc.Sprite();
+			this.pieCover.initWithFile(window.bl.getResource(this.pieCoverFilename));
+			this.pieCover.setZOrder(1);
+			this.addChild(this.pieCover);
 
 			this.piePieceNode = new cc.Node();
 			this.addChild(this.piePieceNode);
 
-			var fullPiePiece = new PiePiece();
-			this.piePieceNode.addChild(fullPiePiece);
-			fullPiePiece.setPiePiece(1,1);
+
 		},
 
-		split:function() {
-			this.piePieceNode.removeAllChildren();
-			for (var i = 1; i <= this.numberOfPieces; i++) {
-				var piePiece = new PiePiece();
-				piePiece.setPiePiece(i, this.numberOfPieces);
-				this.piePieceNode.addChild(piePiece);
-				this.piePieces.push(piePiece);
 
-			};
-		},
 
 		processTouch:function(touchLocation) {
 			var pieceSelected = null;
 			var touchRelative = this.convertToNodeSpace(touchLocation);
-			var radius = this.piePieceCover.getBoundingBox().size.width/2;
+			var radius = this.pieCover.getBoundingBox().size.width/2;
 			var centre = this.getAnchorPointInPoints();
 			if (cc.pDistance(touchRelative, centre) < radius) {
 				var xDifference = touchRelative.x - centre.x;
@@ -60,6 +48,20 @@ define(['piepiece'], function(PiePiece) {
 			this.selectedPiece.removeFromParent();
 			var selectedPieceIndex = this.piePieces.indexOf(this.selectedPiece);
 			this.piePieces.splice(selectedPieceIndex, 1);
+			for (var i = 0; i < this.piePieces.length; i++) {
+				this.piePieces[i].setPiePiece(i+1, this.numberOfPieces);
+			};
+		},
+
+		addPiePiece:function() {
+			var piePiece = new PiePiece();
+			piePiece.setPiePiece(this.piePieces.length + 1, this.numberOfPieces);
+			this.piePieceNode.addChild(piePiece);
+			this.piePieces.push(piePiece);
+		},
+
+		roomForOneMore:function() {
+			return this.piePieces.length < this.numberOfPieces;
 		},
 
 	})
