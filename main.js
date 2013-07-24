@@ -37,13 +37,22 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piehole', 'exports', 'cocos2d', 't
                   this.movingPiePiece = null;
                   this.selectedPie = null;
 
-                  this.pie = new Pie();
+                  this.pies = [];
+                  for (var i = 0; i < this.dividend; i++) {
+                        var pie = new Pie();
+                        pie.setPosition(150 + size.width * i/this.dividend, size.height * 2/3);
+                        pie.numberOfPieces = this.divisor;
+                        this.pies.push(pie);
+                        this.addChild(pie);
+                  };
+
+/*                  this.pie = new Pie();
                   this.pie.setPosition(size.width * 1/3, size.height/2);
                   this.pie.numberOfPieces = this.divisor;
                   this.addChild(this.pie);
-
+*/
                   this.pieHole = new PieHole();
-                  this.pieHole.setPosition(size.width * 2/3, size.height/2);
+                  this.pieHole.setPosition(size.width * 1/2, size.height * 1/3);
                   this.pieHole.fraction = this.divisor;
                   this.addChild(this.pieHole);
 
@@ -59,19 +68,25 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piehole', 'exports', 'cocos2d', 't
             },
 
             split:function() {
-                  this.pie.split();
+                  for (var i = 0; i < this.pies.length; i++) {
+                        this.pies[i].split();
+                  };
             },
 
             onTouchesBegan:function(touches, event) {
                   var touch = touches[0];
                   var touchLocation = this.convertTouchToNodeSpace(touch);
-                  var selectedPiece = this.pie.processTouch(touchLocation);
-                  if (selectedPiece !== null) {
-                        this.movingPiePiece = new MovingPiePiece();
-                        this.movingPiePiece.setPiePiece(selectedPiece.section, selectedPiece.fraction);
-                        this.movingPiePiece.setPosition(cc.pSub(touchLocation, this.movingPiePiece.dragPoint));
-                        this.addChild(this.movingPiePiece);
-                        this.selectedPie = this.pie;
+                  for (var i = 0; i < this.pies.length; i++) {
+                        var pie = this.pies[i];
+                        var selectedPiece = pie.processTouch(touchLocation);
+                        if (selectedPiece !== null) {
+                              this.movingPiePiece = new MovingPiePiece();
+                              this.movingPiePiece.setPiePiece(selectedPiece.section, selectedPiece.fraction);
+                              this.movingPiePiece.setPosition(cc.pSub(touchLocation, this.movingPiePiece.dragPoint));
+                              this.addChild(this.movingPiePiece);
+                              this.selectedPie = pie;
+                              break;
+                        };
                   };
             },
 
