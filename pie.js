@@ -7,6 +7,7 @@ define(['piepiece'], function(PiePiece) {
 			this._super();
 			this.piePieces = [];
 			this.numberOfPieces;
+			this.selectedPiece = null;
 
 			this.piePieceCover = new cc.Sprite();
 			this.piePieceCover.initWithFile(window.bl.getResource('pie_cover'));
@@ -24,23 +25,18 @@ define(['piepiece'], function(PiePiece) {
 
 		split:function() {
 			this.piePieceNode.removeAllChildren();
-			this.numberOfPieces = 10;
+			this.numberOfPieces = 20;
 			for (var i = 1; i <= this.numberOfPieces; i++) {
 				var piePiece = new PiePiece();
 				piePiece.setPiePiece(i, this.numberOfPieces);
 				this.piePieceNode.addChild(piePiece);
 				this.piePieces.push(piePiece);
-				// var fraction = i * 2 * Math.PI/this.numberOfPieces - Math.PI/(this.numberOfPieces);
-/*				var position = cc.p(100 * Math.sin(fraction), 100 * Math.cos(fraction));
-				var action = cc.MoveBy.create(0.8, position);
-				var actionReverse = action.reverse();
-				var seq = cc.Sequence.create(action, actionReverse);
-				var repeatForever = cc.RepeatForever.create(seq);
-				piePiece.runAction(repeatForever);
-*/			};
+
+			};
 		},
 
 		processTouch:function(touchLocation) {
+			var pieceSelected = null;
 			var touchRelative = this.convertToNodeSpace(touchLocation);
 			var radius = this.piePieceCover.getBoundingBox().size.width/2;
 			var centre = this.getAnchorPointInPoints();
@@ -52,10 +48,13 @@ define(['piepiece'], function(PiePiece) {
 				for (var i = 0; i < this.piePieces.length; i++) {
 					var piece = this.piePieces[i];
 					if (angle > piece.startAngle && angle < piece.endAngle) {
-						
+						this.selectedPiece = piece;
+						piece.setVisible(false);
+						pieceSelected = piece;
 					};
 				};
 			};
+			return pieceSelected;
 		},
 
 	})

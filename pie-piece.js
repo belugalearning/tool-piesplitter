@@ -5,14 +5,17 @@ define(['canvasclippingnode'], function(CanvasClippingNode) {
 
 		ctor:function() {
 			this._super();
-			// this.startAngle = null;
-			// this.endAngle = null;
+			this.startAngle = null;
+			this.endAngle = null;
+			this.dragPoint = null;
+			this.section = null;
+			this.fraction = null;
 
-			var piePieceBackground = new cc.Sprite();
-			piePieceBackground.initWithFile(window.bl.getResource('slice1'));
-			this.piePieceBox = piePieceBackground.getBoundingBox();
+			this.piePieceBackground = new cc.Sprite();
+			this.piePieceBackground.initWithFile(window.bl.getResource('slice1'));
+			this.piePieceBox = this.piePieceBackground.getBoundingBox();
 
-
+			this.radius = this.piePieceBox.size.width/2 + 10;
 
 			this.clippingNode = new CanvasClippingNode();
 			this.addChild(this.clippingNode);
@@ -20,26 +23,34 @@ define(['canvasclippingnode'], function(CanvasClippingNode) {
 			this.clippingNode.drawPathToClip = function() {
 				this.ctx.rect(piePieceBox.origin.x, piePieceBox.origin.y, piePieceBox.size.width, piePieceBox.size.height);
 			}
-			this.clippingNode.addChild(piePieceBackground);
+			this.clippingNode.addChild(this.piePieceBackground);
 			// this.setPiePiece(1,3);
 		},
 
 		setPiePiece:function(section, fraction) {
-			var angleCorrection = Math.PI/2;
-			var radius = this.piePieceBox.size.width/2 + 10;
+			this.section = section;
+			this.fraction = fraction;
 			this.startAngle = (section - 1)/fraction * Math.PI * 2;
 			this.endAngle = section/fraction * Math.PI * 2;
-			var midAngle = (this.startAngle + this.endAngle)/2 - angleCorrection;
-			var innerPointX = this.piePieceBox.origin.x + this.piePieceBox.size.width/2 + fraction/3 * Math.cos(midAngle);
-			var innerPointY = this.piePieceBox.origin.y + this.piePieceBox.size.height/2 + fraction/3 * Math.sin(midAngle);
+			var angle
+			var innerPoint = this.pointAwayFromCentre(fraction/3, -Math.PI/2);
+
 			var self = this;
 			this.clippingNode.drawPathToClip = function() {
 				this.ctx.beginPath();
-				this.ctx.moveTo(innerPointX, innerPointY);
-				this.ctx.arc(innerPointX, innerPointY, radius, self.startAngle - angleCorrection, self.endAngle - angleCorrection);
-				this.ctx.lineTo(innerPointX, innerPointY);
+				this.ctx.moveTo(innerPoint.y, innerPoint.x);
+				this.ctx.arc(innerPoint.y, innerPoint.x, self.radius, self.startAngle - Math.PI/2, self.endAngle - Math.PI/2);
+				this.ctx.lineTo(innerPoint.y, innerPoint.x);
 				this.ctx.closePath();
 			}
+		},
+
+		pointAwayFromCentre:function(distance, angleCorrection) {
+			var midAngle = (this.startAngle + this.endAngle)/2 + angleCorrection;
+			var inPointX = this.piePieceBox.origin.x + this.piePieceBox.size.width/2 + distance * Math.sin(midAngle);
+			var inPointY = this.piePieceBox.origin.y + this.piePieceBox.size.height/2 + distance * Math.cos(midAngle);
+			var inPoint = cc.p(inPointX, inPointY);
+			return inPoint;
 		},
 
 	})

@@ -3,11 +3,12 @@ require.config({
 		'toollayer': '../../tools/common/toollayer',
             'canvasclippingnode': '../../tools/common/canvas-clipping-node',
             'pie': '../../tools/piesplitter/pie',
-            'piepiece': '../../tools/piesplitter/pie-piece'
+            'piepiece': '../../tools/piesplitter/pie-piece',
+            'movingpiepiece': '../../tools/piesplitter/moving-pie-piece'
 	}
 });
 
-define(['pie', 'exports', 'cocos2d', 'toollayer', 'qlayer'], function(Pie, exports, cocos2d, ToolLayer, QLayer) {
+define(['pie', 'piepiece', 'movingpiepiece', 'exports', 'cocos2d', 'toollayer', 'qlayer'], function(Pie, PiePiece, MovingPiePiece, exports, cocos2d, ToolLayer, QLayer) {
 	'use strict';
 
 	window.bl.toolTag = 'piesplitter';
@@ -32,6 +33,8 @@ define(['pie', 'exports', 'cocos2d', 'toollayer', 'qlayer'], function(Pie, expor
                   this.dividend = 3;
                   this.divisor = 4;
 
+                  this.movingPiePiece = null;
+
                   this.pie = new Pie();
                   this.pie.setPosition(size.width/2, size.height/2);
                   this.addChild(this.pie);
@@ -54,7 +57,25 @@ define(['pie', 'exports', 'cocos2d', 'toollayer', 'qlayer'], function(Pie, expor
             onTouchesBegan:function(touches, event) {
                   var touch = touches[0];
                   var touchLocation = this.convertTouchToNodeSpace(touch);
-                  this.pie.processTouch(touchLocation);
+                  var selectedPiece = this.pie.processTouch(touchLocation);
+                  if (selectedPiece !== null) {
+                        this.movingPiePiece = new MovingPiePiece();
+                        this.movingPiePiece.setPiePiece(selectedPiece.section, selectedPiece.fraction);
+                        this.movingPiePiece.setPosition(cc.pSub(touchLocation, this.movingPiePiece.dragPoint));
+                        this.addChild(this.movingPiePiece);
+                  };
+            },
+
+            onTouchesMoved:function(touches, event) {
+                  var touch = touches[0];
+                  var touchLocation = this.convertTouchToNodeSpace(touch);
+                  if (this.movingPiePiece !== null) {
+                        this.movingPiePiece.setPosition(cc.pSub(touchLocation, this.movingPiePiece.dragPoint));
+                  };
+            },
+
+            onTouchesEnded:function(touches, event) {
+                  this.movingPiePiece = null;
             },
 
       });
