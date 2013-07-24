@@ -64,6 +64,18 @@ define(['piepiece'], function(PiePiece) {
 			return this.piePieces.length < this.numberOfPieces;
 		},
 
+		fillPie:function() {
+			this.piePieceNode.removeAllChildren();
+			this.piePieces = [];
+			for (var i = 1; i <= this.numberOfPieces; i++) {
+				var piePiece = new PiePiece();
+				piePiece.setPiePiece(i, this.numberOfPieces);
+				this.piePieceNode.addChild(piePiece);
+				this.piePieces.push(piePiece);
+
+			};
+		},
+
 	})
 
 	return Pie

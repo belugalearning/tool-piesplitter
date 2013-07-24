@@ -80,7 +80,7 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'exports', 
             split:function() {
                   if (!this.splitted) {
                         for (var i = 0; i < this.pieSources.length; i++) {
-                              this.pieSources[i].split();
+                              this.pieSources[i].fillPie();
                         };
                         this.splitted = true;
                   };
