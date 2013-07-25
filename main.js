@@ -32,30 +32,50 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'exports', 
                   clc.addChild(background);
                   this.addChild(clc,0);
 
-                  this.dividend = 2;
-                  this.divisor = 10;
+                  this.dividend = 6;
+                  this.divisor = 6;
+                  this.splitted;
 
                   this.movingPiePiece = null;
                   this.selectedPie = null;
-                  this.splitted = false;
 
+                  this.mainNode = new cc.Node();
+                  this.addChild(this.mainNode);
+                  this.setupMainNode();
+
+                  var menuBackground = new cc.Sprite();
+                  menuBackground.initWithFile(window.bl.getResource('button_tabs'));
+                  menuBackground.setPosition(size.width - menuBackground.getContentSize().width/2, 600);
+                  this.addChild(menuBackground);
+
+                  var resetUnpressedTexture = window.bl.getResource('reset_button');
+                  var resetPressedTexture = window.bl.getResource('reset_button_pressed');
+                  var resetButton = cc.MenuItemImage.create(resetUnpressedTexture, resetPressedTexture, this.reset, this);
+                  resetButton.setPosition(0, 45);
+
+                  var splitUnpressedTexture = window.bl.getResource('split_button');
+                  var splitPressedTextrue = window.bl.getResource('split_button_pressed');
+                  var splitButton = cc.MenuItemImage.create(splitUnpressedTexture, splitPressedTextrue, this.split, this);
+                  splitButton.setPosition(0, -48);
+
+                  var splitResetMenu = cc.Menu.create(resetButton, splitButton);
+                  splitResetMenu.setPosition(menuBackground.getAnchorPointInPoints());
+                  menuBackground.addChild(splitResetMenu);
+
+                  return this;
+
+            },
+
+            setupMainNode:function() {
                   this.pieSourceRowNodes = [];
                   this.pieHoleRowNodes = [];
                   this.pieSources = [];
                   this.pieHoles = [];
                   this.setupPieNode(true);
                   this.setupPieNode(false);
-
-                  var splitMenu = cc.Menu.create();
-                  this.addChild(splitMenu);
-
-                  var split = cc.MenuItemFont.create("Split!", this.split, this);
-                  split.setPosition(400, 0);
-                  splitMenu.addChild(split);
-
-                  return this;
-
+                  this.splitted = false;
             },
+
 
             setupPieNode:function(isSource) {
 
@@ -65,9 +85,9 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'exports', 
                   var numberOfPies = isSource ? this.dividend : this.divisor;
 
                   var pieNode = new cc.Node();
-                  var yPositionFraction = isSource ? 2/3 : 1/3;
+                  var yPositionFraction = isSource ? 3/4 : 1/4;
                   pieNode.setPosition(this.size.width/2, this.size.height * yPositionFraction);
-                  this.addChild(pieNode);
+                  this.mainNode.addChild(pieNode);
 
                   for (var i = 0; i < numberOfPies; i++) {
                         var pie = new pieClass();
@@ -81,7 +101,7 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'exports', 
                         this.setupPieRow(pieArray.slice(0, 5), pieRowNodes);
                         this.setupPieRow(pieArray.slice(5), pieRowNodes);
                   };
-                  pieRowNodes.spaceNodesLinear(0, 125);
+                  pieRowNodes.spaceNodesLinear(0, -160);
 
                   for (var i = 0; i < pieRowNodes.length; i++) {
                         pieNode.addChild(pieRowNodes[i]);
@@ -93,9 +113,25 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'exports', 
                   for (var i = 0; i < pies.length; i++) {
                         pieRow.addChild(pies[i]);
                   };
-                  pies.spaceNodesLinear(125, 0);
+                  pies.spaceNodesLinear(160, 0);
                   pieRowNodes.push(pieRow);
             },
+
+            reset:function() {
+                  this.clearMainNode();
+                  this.setupMainNode();
+            },
+
+            clearMainNode:function() {
+                  this.mainNode.removeAllChildren();
+            },
+
+            resetMainNodeWithNumbers:function(dividend, divisor) {
+                  this.dividend = dividend;
+                  this.divisor = divisor;
+                  this.reset();
+            },
+
 
             pies:function() {
                   return this.pieSources.concat(this.pieHoles);
