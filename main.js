@@ -63,7 +63,6 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'exports', 
                   menuBackground.addChild(splitResetMenu);
 
                   return this;
-
             },
 
             setupMainNode:function() {
