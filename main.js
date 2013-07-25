@@ -6,11 +6,12 @@ require.config({
             'piepiece': '../../tools/piesplitter/pie-piece',
             'movingpiepiece': '../../tools/piesplitter/moving-pie-piece',
             'piesource': '../../tools/piesplitter/pie-source',
-            'piehole': '../../tools/piesplitter/pie-hole'
+            'piehole': '../../tools/piesplitter/pie-hole',
+            'piesplittersettingslayer': '../../tools/piesplitter/pie-splitter-settings-layer'
 	}
 });
 
-define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'exports', 'cocos2d', 'toollayer', 'qlayer'], function(Pie, PiePiece, MovingPiePiece, PieSource, PieHole, exports, cocos2d, ToolLayer, QLayer) {
+define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplittersettingslayer', 'exports', 'cocos2d', 'toollayer', 'qlayer'], function(Pie, PiePiece, MovingPiePiece, PieSource, PieHole, PieSplitterSettingsLayer, exports, cocos2d, ToolLayer, QLayer) {
 	'use strict';
 
 	window.bl.toolTag = 'piesplitter';
@@ -61,6 +62,9 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'exports', 
                   var splitResetMenu = cc.Menu.create(resetButton, splitButton);
                   splitResetMenu.setPosition(menuBackground.getAnchorPointInPoints());
                   menuBackground.addChild(splitResetMenu);
+
+                  var settingsLayer = new PieSplitterSettingsLayer();
+                  this.addChild(settingsLayer);
 
                   return this;
             },
