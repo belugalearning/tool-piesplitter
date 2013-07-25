@@ -32,36 +32,20 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'exports', 
                   clc.addChild(background);
                   this.addChild(clc,0);
 
-                  this.dividend = 5;
-                  this.divisor = 4;
+                  this.dividend = 2;
+                  this.divisor = 10;
 
                   this.movingPiePiece = null;
                   this.selectedPie = null;
                   this.splitted = false;
 
+                  this.pieSourceRowNodes = [];
+                  this.pieHoleRowNodes = [];
                   this.pieSources = [];
-                  for (var i = 0; i < this.dividend; i++) {
-                        var pieSource = new PieSource();
-                        pieSource.setPosition(50 + size.width * i/this.dividend, size.height * 2/3);
-                        pieSource.numberOfPieces = this.divisor;
-                        this.pieSources.push(pieSource);
-                        this.addChild(pieSource);
-                  };
-
                   this.pieHoles = [];
-                  for (var i = 0; i < this.divisor; i++) {
-                        var pieHole = new PieHole();
-                        pieHole.setPosition(50 + size.width * i/this.divisor, size.height * 1/3);
-                        pieHole.numberOfPieces = this.divisor;
-                        this.pieHoles.push(pieHole);
-                        this.addChild(pieHole);
-                  };
+                  this.setupPieNode(true);
+                  this.setupPieNode(false);
 
-/*                  this.pieHole = new PieHole();
-                  this.pieHole.setPosition(size.width * 1/2, size.height * 1/3);
-                  this.pieHole.fraction = this.divisor;
-                  this.addChild(this.pieHole);
-*/
                   var splitMenu = cc.Menu.create();
                   this.addChild(splitMenu);
 
@@ -71,6 +55,46 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'exports', 
 
                   return this;
 
+            },
+
+            setupPieNode:function(isSource) {
+
+                  var pieClass = isSource ? PieSource : PieHole
+                  var pieArray = isSource ? this.pieSources : this.pieHoles;
+                  var pieRowNodes = isSource ? this.pieSourceRowNodes : this.pieHoleRowNodes;
+                  var numberOfPies = isSource ? this.dividend : this.divisor;
+
+                  var pieNode = new cc.Node();
+                  var yPositionFraction = isSource ? 2/3 : 1/3;
+                  pieNode.setPosition(this.size.width/2, this.size.height * yPositionFraction);
+                  this.addChild(pieNode);
+
+                  for (var i = 0; i < numberOfPies; i++) {
+                        var pie = new pieClass();
+                        pie.numberOfPieces = this.divisor;
+                        pieArray.push(pie);
+                  };
+
+                  if (pieArray.length <= 5) {
+                        this.setupPieRow(pieArray, pieRowNodes);
+                  } else {
+                        this.setupPieRow(pieArray.slice(0, 5), pieRowNodes);
+                        this.setupPieRow(pieArray.slice(5), pieRowNodes);
+                  };
+                  pieRowNodes.spaceNodesLinear(0, 125);
+
+                  for (var i = 0; i < pieRowNodes.length; i++) {
+                        pieNode.addChild(pieRowNodes[i]);
+                  };
+            },
+
+            setupPieRow:function(pies, pieRowNodes) {
+                  var pieRow = new cc.Node();
+                  for (var i = 0; i < pies.length; i++) {
+                        pieRow.addChild(pies[i]);
+                  };
+                  pies.spaceNodesLinear(125, 0);
+                  pieRowNodes.push(pieRow);
             },
 
             pies:function() {

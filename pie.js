@@ -16,8 +16,6 @@ define(['piepiece'], function(PiePiece) {
 
 			this.piePieceNode = new cc.Node();
 			this.addChild(this.piePieceNode);
-
-
 		},
 
 
