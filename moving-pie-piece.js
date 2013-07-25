@@ -16,16 +16,13 @@ define(['piepiece'], function(PiePiece) {
 
 		setPiePiece:function(section, fraction) {
 			this._super(section, fraction);
-
-			this.dragPoint = this.pointAwayFromCentre(this.radius * 7/12, 0);
+			if (fraction > 1) {
+				this.dragPoint = this.pointAwayFromCentre(this.radius * 7/12, 0);
+			} else {
+				this.dragPoint = this.getAnchorPointInPoints();
+			};
 		},
 	})
 
 	return MovingPiePiece;
-
-
-/*				var dragPointX = this.piePieceBox.origin.x + this.piePieceBox.size.width/2 + radius/2 * Math.cos(midAngle);
-			var dragPointY = this.piePieceBox.origin.y + this.piePieceBox.size.height/2 + radius/2 * Math.sin(midAngle);
-			this.dragPoint = cc.p(dragPointX, dragPointY);
-*/
 })
