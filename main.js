@@ -64,8 +64,9 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   splitResetMenu.setPosition(menuBackground.getAnchorPointInPoints());
                   menuBackground.addChild(splitResetMenu);
 
-                  var settingsLayer = new PieSplitterSettingsLayer();
-                  this.addChild(settingsLayer);
+                  this.settingsLayer = new PieSplitterSettingsLayer();
+                  this.addChild(this.settingsLayer);
+                  this.settingsLayer.setNumbers(this.dividend, this.divisor);
 
                   return this;
             },
@@ -200,6 +201,16 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                               this.movingPiePiece = null;
                         };
                   }
+            },
+
+            update:function() {
+                  this._super();
+                  var settings = this.settingsLayer;
+                  if (settings.needToChangePies) {
+                        this.resetMainNodeWithNumbers(settings.dividend, settings.divisor);
+                        this.questionLabel.setString(settings.dividend + " divided by " + settings.divisor);
+                        settings.needToChangePies = false;
+                  };
             },
 
       });
