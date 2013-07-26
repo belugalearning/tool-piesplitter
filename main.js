@@ -71,10 +71,10 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
 
                   var splitUnpressedTexture = window.bl.getResource('split_button');
                   var splitPressedTextrue = window.bl.getResource('split_button_pressed');
-                  var splitButton = cc.MenuItemImage.create(splitUnpressedTexture, splitPressedTextrue, this.split, this);
-                  splitButton.setPosition(0, -48);
+                  this.splitButton = cc.MenuItemImage.create(splitUnpressedTexture, splitPressedTextrue, this.split, this);
+                  this.splitButton.setPosition(0, -48);
 
-                  var splitResetMenu = cc.Menu.create(resetButton, splitButton);
+                  var splitResetMenu = cc.Menu.create(resetButton, this.splitButton);
                   splitResetMenu.setPosition(menuBackground.getAnchorPointInPoints());
                   menuBackground.addChild(splitResetMenu);
 
@@ -141,6 +141,8 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
             reset:function() {
                   this.clearMainNode();
                   this.setupMainNode();
+                  this.splitButton.setOpacity(255);
+                  this.splitButton.setEnabled(true);
             },
 
             clearMainNode:function() {
@@ -164,6 +166,8 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                               this.pieSources[i].fillPie();
                         };
                         this.splitted = true;
+                        this.splitButton.setOpacity(128);
+                        this.splitButton.setEnabled(false);
                   };
             },
 
