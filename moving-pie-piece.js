@@ -8,7 +8,7 @@ define(['piepiece'], function(PiePiece) {
 			this.dragPoint = null;
 
 			var movingCover = new cc.Sprite();
-			movingCover.initWithFile(window.bl.getResource('big_bubble'));
+			movingCover.initWithFile(window.bl.getResource('bubble_pattern'));
 			movingCover.setZOrder(1);
 			movingCover.setPosition(this.piePieceBackground.getAnchorPointInPoints());
 			this.piePieceBackground.addChild(movingCover);
