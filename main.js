@@ -34,20 +34,34 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   clc.addChild(background);
                   this.addChild(clc,0);
 
-                  this.dividend = 6;
-                  this.divisor = 6;
+                  this.dividend = 3;
+                  this.divisor = 4;
                   this.splitted;
 
                   this.movingPiePiece = null;
                   this.selectedPie = null;
 
+                  var title = new cc.Sprite();
+                  title.initWithFile(window.bl.getResource('title'));
+                  title.setPosition(size.width/2, 710);
+                  this.addChild(title);
+
                   this.mainNode = new cc.Node();
                   this.addChild(this.mainNode);
                   this.setupMainNode();
 
+                  var questionBox = new cc.Sprite();
+                  questionBox.initWithFile(window.bl.getResource('question_tray'));
+                  questionBox.setPosition(size.width/2, 610);
+                  this.addChild(questionBox);
+
+                  this.questionLabel = new cc.LabelTTF.create(this.dividend + " divided by " + this.divisor, "mikadoBold", 40);
+                  this.questionLabel.setPosition(cc.pAdd(questionBox.getAnchorPointInPoints(), cc.p(0, 4)));
+                  questionBox.addChild(this.questionLabel);
+
                   var menuBackground = new cc.Sprite();
                   menuBackground.initWithFile(window.bl.getResource('button_tabs'));
-                  menuBackground.setPosition(size.width - menuBackground.getContentSize().width/2, 600);
+                  menuBackground.setPosition(size.width - menuBackground.getContentSize().width/2, 450);
                   this.addChild(menuBackground);
 
                   var resetUnpressedTexture = window.bl.getResource('reset_button');
@@ -88,10 +102,12 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   var pieArray = isSource ? this.pieSources : this.pieHoles;
                   var pieRowNodes = isSource ? this.pieSourceRowNodes : this.pieHoleRowNodes;
                   var numberOfPies = isSource ? this.dividend : this.divisor;
+                  var verticalSpacing = isSource ? 130 : 150;
+                  var horizontalSpacing = 170;
 
                   var pieNode = new cc.Node();
-                  var yPositionFraction = isSource ? 3/4 : 1/4;
-                  pieNode.setPosition(this.size.width/2, this.size.height * yPositionFraction);
+                  var yPosition = isSource ? 440 : 180;
+                  pieNode.setPosition(this.size.width/2, yPosition);
                   this.mainNode.addChild(pieNode);
 
                   for (var i = 0; i < numberOfPies; i++) {
@@ -101,24 +117,24 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   };
 
                   if (pieArray.length <= 5) {
-                        this.setupPieRow(pieArray, pieRowNodes);
+                        this.setupPieRow(pieArray, pieRowNodes, horizontalSpacing);
                   } else {
-                        this.setupPieRow(pieArray.slice(0, 5), pieRowNodes);
-                        this.setupPieRow(pieArray.slice(5), pieRowNodes);
+                        this.setupPieRow(pieArray.slice(0, 5), pieRowNodes, horizontalSpacing);
+                        this.setupPieRow(pieArray.slice(5), pieRowNodes, horizontalSpacing);
                   };
-                  pieRowNodes.spaceNodesLinear(0, -160);
+                  pieRowNodes.spaceNodesLinear(0, -verticalSpacing);
 
                   for (var i = 0; i < pieRowNodes.length; i++) {
                         pieNode.addChild(pieRowNodes[i]);
                   };
             },
 
-            setupPieRow:function(pies, pieRowNodes) {
+            setupPieRow:function(pies, pieRowNodes, spacing) {
                   var pieRow = new cc.Node();
                   for (var i = 0; i < pies.length; i++) {
                         pieRow.addChild(pies[i]);
                   };
-                  pies.spaceNodesLinear(160, 0);
+                  pies.spaceNodesLinear(spacing, 0);
                   pieRowNodes.push(pieRow);
             },
 
