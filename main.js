@@ -35,7 +35,7 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   clc.addChild(background);
                   this.addChild(clc,0);
 
-                  this.prefill = false;
+                  this.prefill = true;
 
                   this.questionDividend = 3;
                   this.questionDivisor = 4;
@@ -95,6 +95,7 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   this.settingsLayer = new PieSplitterSettingsLayer();
                   this.addChild(this.settingsLayer);
                   this.settingsLayer.setNumbers(this.questionDividend, this.questionDivisor);
+                  this.settingsLayer.setPrefill(this.prefill);
 
                   return this;
             },
@@ -396,16 +397,17 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
             update:function() {
                   this._super();
                   var settings = this.settingsLayer;
-                  if (settings.needToChangePies) {
+                  if (settings.needToChange) {
                         this.questionDividend = settings.dividend;
                         this.questionDivisor = settings.divisor;
+                        this.prefill = settings.prefill;
                         this.questionLabel.setString(this.questionDividend + " divided by " + this.questionDivisor);
                         if (this.prefill) {
                               this.resetMainNodeWithNumbers(settings.dividend, settings.divisor);
                         } else {
                               this.resetMainNodeWithNumbers(0,0);
                         };
-                        settings.needToChangePies = false;
+                        settings.needToChange = false;
                   };
             },
 

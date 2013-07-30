@@ -1,4 +1,4 @@
-define(['settingslayer', 'buttonsprite'], function(SettingsLayer, ButtonSprite) {
+define(['settingslayer', 'buttonsprite', 'blbutton'], function(SettingsLayer, ButtonSprite, BlButton) {
 
 	var PieSplitterSettingsLayer = SettingsLayer.extend({
 		backgroundFilename:'settings_BG',
@@ -36,6 +36,16 @@ define(['settingslayer', 'buttonsprite'], function(SettingsLayer, ButtonSprite) 
 			this.divisorPickerBoxNode = this.createPickerBoxNode(false);
 			this.divisorPickerBoxNode.setPosition(100, 0);
 			divisorNode.addChild(this.divisorPickerBoxNode);
+
+			this.prefillButton = new ButtonSprite();
+			this.prefillButton.initWithFile(window.bl.getResource('prefilled_button'));
+			this.prefillButton.setPosition(this.size.width/2, 100);
+			this.background.addChild(this.prefillButton);
+			this.prefillButton.target = this;
+			this.prefillButton.pressFunction = this.togglePrefill;
+
+			this.touchProcessors.push(this.prefillButton);
+
 		},
 
 		createPickerBoxNode:function(isDividend) {
@@ -83,6 +93,12 @@ define(['settingslayer', 'buttonsprite'], function(SettingsLayer, ButtonSprite) 
 			this.startDivisor = this.startDivisor || divisor; 
 		},
 
+		setPrefill:function(prefill) {
+			this.prefill = prefill;
+			var filename = prefill ? 'prefilled_button' : 'prefilled_button_off';
+			this.prefillButton.setTextureWithFilename(window.bl.getResource(filename));
+		},
+
 		changeNumber:function() {
 			var isIncrease = arguments[0][0];
 			var isDividend = arguments[0][1];
@@ -105,12 +121,17 @@ define(['settingslayer', 'buttonsprite'], function(SettingsLayer, ButtonSprite) 
 		processOpenSettings:function() {
 			this.startDividend = this.dividend;
 			this.startDivisor = this.divisor;
+			this.startPrefill = this.prefill;
 			this._super();
 		},
 
 		processCloseSettings:function() {
-			this.needToChangePies = this.startDividend !== this.dividend || this.startDivisor !== this.divisor;
+			this.needToChange = this.startDividend !== this.dividend || this.startDivisor !== this.divisor || this.startPrefill !== this.prefill;
 			this._super();
+		},
+
+		togglePrefill:function() {
+			this.setPrefill(!this.prefill);
 		},
 	})
 
