@@ -35,8 +35,13 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   clc.addChild(background);
                   this.addChild(clc,0);
 
-                  this.dividend = 3;
-                  this.divisor = 4;
+                  this.prefill = false;
+
+                  this.questionDividend = 3;
+                  this.questionDivisor = 4;
+
+                  this.dividend = this.prefill ? this.questionDividend : 0;
+                  this.divisor = this.prefill ? this.questionDivisor : 0;
                   this.splitted;
                   this.pieSourceNodePosition = cc.p(130, 320);
                   this.pieHoleNodePosition = cc.p(130, 60);
@@ -60,7 +65,7 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   questionBox.setPosition(size.width/2, 610);
                   this.addChild(questionBox);
 
-                  this.questionLabel = new cc.LabelTTF.create(this.dividend + " divided by " + this.divisor, "mikadoBold", 40);
+                  this.questionLabel = new cc.LabelTTF.create(this.questionDividend + " divided by " + this.questionDivisor, "mikadoBold", 40);
                   this.questionLabel.setPosition(cc.pAdd(questionBox.getAnchorPointInPoints(), cc.p(0, 4)));
                   questionBox.addChild(this.questionLabel);
 
@@ -71,7 +76,7 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
 
                   var resetUnpressedTexture = window.bl.getResource('reset_button');
                   var resetPressedTexture = window.bl.getResource('reset_button_pressed');
-                  var resetButton = cc.MenuItemImage.create(resetUnpressedTexture, resetPressedTexture, this.reset, this);
+                  var resetButton = cc.MenuItemImage.create(resetUnpressedTexture, resetPressedTexture, this.resetFromButton, this);
                   resetButton.setPosition(0, 45);
 
                   var splitUnpressedTexture = window.bl.getResource('split_button');
@@ -89,7 +94,7 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
 
                   this.settingsLayer = new PieSplitterSettingsLayer();
                   this.addChild(this.settingsLayer);
-                  this.settingsLayer.setNumbers(this.dividend, this.divisor);
+                  this.settingsLayer.setNumbers(this.questionDividend, this.questionDivisor);
 
                   return this;
             },
@@ -143,11 +148,21 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   var extraHoles = extraHoleHolesArray[1];
                   extraHoles[extraHoles.length - 1].setOpacity(128);
 
-                  this.setupDragPieButton(true);
-                  this.setupDragPieButton(false);
+                  this.dragSourceButton = this.setupDragPieButton(true);
+                  this.dragHoleButton = this.setupDragPieButton(false);
+                  if (this.prefill) {
+                        this.dragSourceButton.setUseable(false);
+                        this.dragHoleButton.setUseable(false);
+                  };
 
-                  this.questionLabel.setString(this.dividend + " divided by " + this.divisor);
 
+                  if (this.divisor === 0) {
+                        this.splitButton.setOpacity(128);
+                        this.splitButton.setEnabled(false);
+                  } else {
+                        this.splitButton.setOpacity(255);
+                        this.splitButton.setEnabled(true);
+                  };
             },
 
 
@@ -197,10 +212,18 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
             },
 
             reset:function() {
-                  this.clearMainNode();
-                  this.setupMainNode();
                   this.splitButton.setOpacity(255);
                   this.splitButton.setEnabled(true);
+                  this.clearMainNode();
+                  this.setupMainNode();
+            },
+
+            resetFromButton:function() {
+                  if (this.prefill) {
+                        this.reset();
+                  } else {
+                        this.resetMainNodeWithNumbers(0, 0);
+                  };
             },
 
             clearMainNode:function() {
@@ -306,10 +329,11 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   var position = this.dragOnTabs.convertToWorldSpace(position);
                   dragButton.setPosition(correctedPosition);
                   dragButton.setScale(0.5);
-                  this.addChild(dragButton);
+                  this.mainNode.addChild(dragButton);
                   dragButton.setZoomOnTouchDown(false);
                   dragButton.setVisible(false);
                   dragButton.alreadyTouched = false;
+                  dragButton.dummyButton = dragDummyButton;
 
                   var extraVisible = false;
 
@@ -353,14 +377,28 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
 
                   };
                   dragButton.onMoveEnded(stopDraggablePie);
-            },
 
+                  dragButton.setUseable = function(useable) {
+                        dragButton.setEnabled(useable);
+                        var opacity = useable ? 255 : 128;
+                        dragDummyButton.setOpacity(opacity);
+                  }
+
+                  return dragButton;
+            },
 
             update:function() {
                   this._super();
                   var settings = this.settingsLayer;
                   if (settings.needToChangePies) {
-                        this.resetMainNodeWithNumbers(settings.dividend, settings.divisor);
+                        this.questionDividend = settings.dividend;
+                        this.questionDivisor = settings.divisor;
+                        this.questionLabel.setString(this.questionDividend + " divided by " + this.questionDivisor);
+                        if (this.prefill) {
+                              this.resetMainNodeWithNumbers(settings.dividend, settings.divisor);
+                        } else {
+                              this.resetMainNodeWithNumbers(0,0);
+                        };
                         settings.needToChangePies = false;
                   };
             },
