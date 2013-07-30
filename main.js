@@ -335,6 +335,7 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
 
                   var startDraggablePie = function() {
                         var scaleUp = cc.ScaleTo.create(0.3, 1);
+                        this.setZOrder(1);
                         this.runAction(scaleUp);
                         this.setVisible(true);
                   };
