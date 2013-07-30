@@ -49,9 +49,11 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   title.setPosition(size.width/2, 710);
                   this.addChild(title);
 
-                  this.mainNode = new cc.Node();
-                  this.addChild(this.mainNode);
-                  this.setupMainNode();
+                  var dragOnTabs = new cc.Sprite();
+                  this.dragOnTabs = dragOnTabs;
+                  dragOnTabs.initWithFile(window.bl.getResource('drag_tabs'));
+                  dragOnTabs.setPosition(dragOnTabs.getContentSize().width/2, 450);
+                  this.addChild(dragOnTabs);
 
                   var questionBox = new cc.Sprite();
                   questionBox.initWithFile(window.bl.getResource('question_tray'));
@@ -81,22 +83,9 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   splitResetMenu.setPosition(menuBackground.getAnchorPointInPoints());
                   menuBackground.addChild(splitResetMenu);
 
-                  var dragOnTabs = new cc.Sprite();
-                  this.dragOnTabs = dragOnTabs;
-                  dragOnTabs.initWithFile(window.bl.getResource('drag_tabs'));
-                  dragOnTabs.setPosition(dragOnTabs.getContentSize().width/2, 450);
-                  this.addChild(dragOnTabs);
-
-
-
-                  this.setupDragPieButton(true);
-
-
-
-                  var dragHoleButton = new BLButton();
-                  dragHoleButton.initWithFile(window.bl.getResource('drag_bubble'));
-                  dragHoleButton.setPosition(62, 55);
-                  dragOnTabs.addChild(dragHoleButton);
+                  this.mainNode = new cc.Node();
+                  this.addChild(this.mainNode);
+                  this.setupMainNode();
 
                   this.settingsLayer = new PieSplitterSettingsLayer();
                   this.addChild(this.settingsLayer);
@@ -140,7 +129,6 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
 
                   this.extraHoleNode = new cc.Node();
                   this.mainNode.addChild(this.extraHoleNode);
-                  this.extraHoleNode.setPosition(this.pieHoleNodePosition);
                   this.extraHoleNode.setVisible(false);
 
                   var extraHoleSourcesArray = this.setupPieNode(true, this.dividend, Math.min(10, this.divisor + 1));
@@ -154,14 +142,20 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   extraHoleHoles.setPosition(this.pieHoleNodePosition);
                   var extraHoles = extraHoleHolesArray[1];
                   extraHoles[extraHoles.length - 1].setOpacity(128);
+
+                  this.setupDragPieButton(true);
+                  this.setupDragPieButton(false);
+
+                  this.questionLabel.setString(this.dividend + " divided by " + this.divisor);
+
             },
 
-            setupPieNode:function(isSource) {
 
+            setupPieNode:function(isSource, dividend, divisor) {
                   var pieClass = isSource ? PieSource : PieHole
-                  var pieArray = isSource ? this.pieSources : this.pieHoles;
-                  var pieRowNodes = isSource ? this.pieSourceRowNodes : this.pieHoleRowNodes;
-                  var numberOfPies = isSource ? this.dividend : this.divisor;
+                  var pieArray = [];
+                  var pieRowNodes = [];
+                  var numberOfPies = isSource ? dividend : divisor;
                   var verticalSpacing = isSource ? 130 : 150;
                   var horizontalSpacing = 170;
 
@@ -190,7 +184,7 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
 
                   pieNode.setContentSize(cc.SizeMake(800, 230));
 
-                  return pieNode;
+                  return [pieNode, pieArray];
             },
 
             setupPieRow:function(pies, pieRowNodes, spacing) {
@@ -261,9 +255,6 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   if (this.movingPiePiece !== null) {
                         this.movingPiePiece.setPosition(cc.pSub(touchLocation, this.movingPiePiece.dragPoint));
                   };
-                  if (this.dragSourceButton.getIsPushed()) {
-                        console.log("I feel moved");
-                  };
             },
 
             onTouchesEnded:function(touches, event) {
@@ -293,25 +284,32 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
             },
 
             setupDragPieButton:function(isSource) {
+                  var filename = isSource ? 'drag_pie' : 'drag_bubble';
+                  var position = isSource ? cc.p(52, 143) : cc.p(62, 55);
+                  var extraNode = isSource ? this.extraSourceNode : this.extraHoleNode;
+                  var classToCreate = isSource ? PieSource : PieHole;
+                  var boundaryNode = isSource ? this.pieSourceNode : this.pieHoleNode;
+
                   var self = this;
 
-                  var dragDummyButton = new cc.Sprite();
-                  dragDummyButton.initWithFile(window.bl.getResource('drag_pie'));
-                  var position = cc.p(52, 143);
-                  dragDummyButton.setPosition(position);
-                  this.dragOnTabs.addChild(dragDummyButton);
+                  var correctedPosition = this.dragOnTabs.convertToWorldSpace(position);
 
-                  var dragSourceButton = new Draggable();
-                  this.dragSourceButton = dragSourceButton;
-                  var movingPieSource = new PieSource();
-                  dragSourceButton.initWithSprite(movingPieSource);
+                  var dragDummyButton = new cc.Sprite();
+                  dragDummyButton.initWithFile(window.bl.getResource(filename));
+                  dragDummyButton.setPosition(correctedPosition);
+                  this.mainNode.addChild(dragDummyButton);
+
+                  var dragButton = new Draggable();
+                  this.dragButton = dragButton;
+                  var movingPieSource = new classToCreate();
+                  dragButton.initWithSprite(movingPieSource);
                   var position = this.dragOnTabs.convertToWorldSpace(position);
-                  dragSourceButton.setPosition(position);
-                  dragSourceButton.setScale(0.5);
-                  this.addChild(dragSourceButton);
-                  dragSourceButton.setZoomOnTouchDown(false);
-                  dragSourceButton.setVisible(false);
-                  dragSourceButton.alreadyTouched = false;
+                  dragButton.setPosition(correctedPosition);
+                  dragButton.setScale(0.5);
+                  this.addChild(dragButton);
+                  dragButton.setZoomOnTouchDown(false);
+                  dragButton.setVisible(false);
+                  dragButton.alreadyTouched = false;
 
                   var extraVisible = false;
 
@@ -320,29 +318,33 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                         this.runAction(scaleUp);
                         this.setVisible(true);
                   };
-                  dragSourceButton.onTouchDown(startDraggablePie);
+                  dragButton.onTouchDown(startDraggablePie);
 
                   var moveDraggablePie = function() {
-                        if (cc.rectContainsPoint(self.pieSourceNode.getBoundingBox(), dragSourceButton.getPosition())) {
-                              console.log("INSIDE!");
+                        if (cc.rectContainsPoint(boundaryNode.getBoundingBox(), dragButton.getPosition())) {
                               if (!extraVisible) {
                                     self.currentPiesNode.setVisible(false);
-                                    self.extraSourceNode.setVisible(true);
+                                    extraNode.setVisible(true);
                                     extraVisible = true;
                               };
                         } else {
                               if (extraVisible) {
                                     self.currentPiesNode.setVisible(true);
-                                    self.extraSourceNode.setVisible(false);
+                                    extraNode.setVisible(false);
                                     extraVisible = false;
                               };
                         };
                   };
-                  dragSourceButton.onMoved(moveDraggablePie);
+                  dragButton.onMoved(moveDraggablePie);
 
                   var stopDraggablePie = function() {
                         if (extraVisible) {
-                              self.resetMainNodeWithNumbers(self.dividend + 1, self.divisor);
+                              if (isSource) {
+                                    self.resetMainNodeWithNumbers(self.dividend + 1, self.divisor);
+                              } else {
+                                    self.resetMainNodeWithNumbers(self.dividend, self.divisor + 1);
+                              };
+                              extraVisible = false;
                         };
 
                         this.returnToHomePosition();
@@ -350,7 +352,7 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                         this.setVisible(false);
 
                   };
-                  dragSourceButton.onMoveEnded(stopDraggablePie);
+                  dragButton.onMoveEnded(stopDraggablePie);
             },
 
 
@@ -359,7 +361,6 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   var settings = this.settingsLayer;
                   if (settings.needToChangePies) {
                         this.resetMainNodeWithNumbers(settings.dividend, settings.divisor);
-                        this.questionLabel.setString(settings.dividend + " divided by " + settings.divisor);
                         settings.needToChangePies = false;
                   };
             },
