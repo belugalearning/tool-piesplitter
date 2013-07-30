@@ -49,11 +49,6 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   this.movingPiePiece = null;
                   this.selectedPie = null;
 
-                  var title = new cc.Sprite();
-                  title.initWithFile(window.bl.getResource('title'));
-                  title.setPosition(size.width/2, 710);
-                  this.addChild(title);
-
                   var dragOnTabs = new cc.Sprite();
                   this.dragOnTabs = dragOnTabs;
                   dragOnTabs.initWithFile(window.bl.getResource('drag_tabs'));
