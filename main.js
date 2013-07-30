@@ -369,6 +369,12 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                                     self.resetMainNodeWithNumbers(self.dividend, self.divisor + 1);
                               };
                               extraVisible = false;
+                              if (self.dividend === 10) {
+                                    self.dragSourceButton.setUseable(false);
+                              };
+                              if (self.divisor === 10) {
+                                    self.dragHoleButton.setUseable(false);
+                              };
                         };
 
                         this.returnToHomePosition();
