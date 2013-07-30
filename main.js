@@ -35,7 +35,7 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   clc.addChild(background);
                   this.addChild(clc,0);
 
-                  this.prefill = true;
+                  this.prefill = false;
 
                   this.questionDividend = 3;
                   this.questionDivisor = 4;
