@@ -24,9 +24,9 @@ define(['piepiece'], function(PiePiece) {
 
 		processTouch:function(touchLocation) {
 			var pieceSelected = null;
-			var touchRelative = this.convertToNodeSpace(touchLocation);
+			var touchRelative = this.pieCover.convertToNodeSpace(touchLocation);
 			var radius = this.pieCover.getBoundingBox().size.width/2;
-			var centre = this.getAnchorPointInPoints();
+			var centre = this.pieCover.getAnchorPointInPoints();
 			if (cc.pDistance(touchRelative, centre) < radius) {
 				var xDifference = touchRelative.x - centre.x;
 				var yDifference = touchRelative.y - centre.y;
