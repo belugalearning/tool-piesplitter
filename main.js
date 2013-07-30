@@ -12,7 +12,7 @@ require.config({
 	}
 });
 
-define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplittersettingslayer', 'exports', 'cocos2d', 'toollayer', 'qlayer'], function(Pie, PiePiece, MovingPiePiece, PieSource, PieHole, PieSplitterSettingsLayer, exports, cocos2d, ToolLayer, QLayer) {
+define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplittersettingslayer', 'blbutton', 'draggable', 'exports', 'cocos2d', 'toollayer', 'qlayer'], function(Pie, PiePiece, MovingPiePiece, PieSource, PieHole, PieSplitterSettingsLayer, BLButton, Draggable, exports, cocos2d, ToolLayer, QLayer) {
 	'use strict';
 
 	window.bl.toolTag = 'piesplitter';
@@ -77,6 +77,37 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   var splitResetMenu = cc.Menu.create(resetButton, this.splitButton);
                   splitResetMenu.setPosition(menuBackground.getAnchorPointInPoints());
                   menuBackground.addChild(splitResetMenu);
+
+                  var dragOnTabs = new cc.Sprite();
+                  this.dragOnTabs = dragOnTabs;
+                  dragOnTabs.initWithFile(window.bl.getResource('drag_tabs'));
+                  dragOnTabs.setPosition(dragOnTabs.getContentSize().width/2, 450);
+                  this.addChild(dragOnTabs);
+
+                  var selfPointer = this;
+
+                  var dragSourceDummyButton = new cc.Sprite();
+                  dragSourceDummyButton.initWithFile(window.bl.getResource('drag_pie'));
+                  dragSourceDummyButton.setPosition(52, 143);
+                  dragOnTabs.addChild(dragSourceDummyButton);
+
+                  var dragSourceButton = new Draggable();
+                  this.dragSourceButton = dragSourceButton;
+                  var movingPieSource = new PieSource();
+                  dragSourceButton.initWithSprite(movingPieSource);
+                  var position = dragOnTabs.convertToWorldSpace(cc.p(52, 143));
+                  dragSourceButton.setPosition(position);
+                  this.addChild(dragSourceButton);
+                  dragSourceButton.onTouchDown(selfPointer.startDraggablePie);
+                  dragSourceButton.onMoveEnded(selfPointer.stopDraggablePie);
+                  dragSourceButton.setZoomOnTouchDown(false);
+                  dragSourceButton.setVisible(false);
+                  dragSourceButton.alreadyTouched = false;
+
+                  var dragHoleButton = new BLButton();
+                  dragHoleButton.initWithFile(window.bl.getResource('drag_bubble'));
+                  dragHoleButton.setPosition(62, 55);
+                  dragOnTabs.addChild(dragHoleButton);
 
                   this.settingsLayer = new PieSplitterSettingsLayer();
                   this.addChild(this.settingsLayer);
@@ -207,7 +238,7 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                               var pies = this.pies();
                               for (var i = 0; i < pies.length; i++) {
                                     var pie = pies[i];
-                                    if (pie.pieCover.touched(touchLocation)) {
+                                    if (pie.touched(touchLocation)) {
                                           if (pie.addPiePiece(this.movingPiePiece.fraction)) {
                                                 this.selectedPie.removeSelectedPiePiece();
                                                 droppedInPieHole = true;
@@ -221,6 +252,20 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                               this.movingPiePiece = null;
                         };
                   }
+            },
+
+            startDraggablePie:function(isSource) {
+                  if (!this.alreadyTouched) {
+                        this.setScale(0.5);
+                        var scaleUp = cc.ScaleTo.create(0.3, 1);
+                        this.runAction(scaleUp);
+                        this.setVisible(true);
+                        this.alreadyTouched = true;
+                  };
+            },
+
+            stopDraggablePie:function() {
+                  
             },
 
             update:function() {

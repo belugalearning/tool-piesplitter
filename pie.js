@@ -16,9 +16,11 @@ define(['piepiece'], function(PiePiece) {
 
 			this.piePieceNode = new cc.Node();
 			this.addChild(this.piePieceNode);
+
+			this.setContentSize(this.pieCover.getContentSize());
+			this.setAnchorPoint(cc.pNeg(this.pieCover.getAnchorPoint()));
+
 		},
-
-
 
 		processTouch:function(touchLocation) {
 			var pieceSelected = null;
