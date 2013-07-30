@@ -76,6 +76,13 @@ define(['piepiece'], function(PiePiece) {
 			};
 		},
 
+		setOpacity:function(opacity) {
+			this.pieCover.setOpacity(opacity);
+			for (var i = 0; i < this.piePieces.length; i++) {
+				this.piePieces[i].setOpacity(opacity);
+			};
+		},
+
 	})
 
 	return Pie

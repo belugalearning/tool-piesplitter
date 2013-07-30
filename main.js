@@ -38,6 +38,8 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   this.dividend = 3;
                   this.divisor = 4;
                   this.splitted;
+                  this.pieSourceNodePosition = cc.p(130, 320);
+                  this.pieHoleNodePosition = cc.p(130, 60);
 
                   this.movingPiePiece = null;
                   this.selectedPie = null;
@@ -87,7 +89,7 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
 
 
 
-                  this.setupDragPieSourceButton();
+                  this.setupDragPieButton(true);
 
 
 
@@ -104,19 +106,55 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
             },
 
             setupMainNode:function() {
-                  this.pieSourceRowNodes = [];
-                  this.pieHoleRowNodes = [];
-                  this.pieSources = [];
-                  this.pieHoles = [];
-                  this.pieSourceNode = this.setupPieNode(true);
-                  this.pieSourceNode.setPosition(130, 320);
-                  this.mainNode.addChild(this.pieSourceNode);
-                  this.pieHoleNode = this.setupPieNode(false);
-                  this.pieHoleNode.setPosition(130, 60);
-                  this.mainNode.addChild(this.pieHoleNode);
-                  this.splitted = false;
-            },
+                  this.currentPiesNode = new cc.Node();
+                  this.mainNode.addChild(this.currentPiesNode);
 
+                  var pieSourceReturnArray = this.setupPieNode(true, this.dividend, this.divisor);
+                  this.pieSourceNode = pieSourceReturnArray[0];
+                  this.pieSources = pieSourceReturnArray[1];
+                  this.pieSourceNode.setPosition(this.pieSourceNodePosition);
+                  this.currentPiesNode.addChild(this.pieSourceNode);
+
+                  var pieHoleNodeReturnArray = this.setupPieNode(false, this.dividend, this.divisor);
+                  this.pieHoleNode = pieHoleNodeReturnArray[0];
+                  this.pieHoles = pieHoleNodeReturnArray[1];
+                  this.pieHoleNode.setPosition(this.pieHoleNodePosition);
+                  this.currentPiesNode.addChild(this.pieHoleNode);
+                  this.splitted = false;
+
+                  this.extraSourceNode = new cc.Node();
+                  this.mainNode.addChild(this.extraSourceNode);
+                  this.extraSourceNode.setVisible(false);
+
+                  var extraSourceSourcesArray = this.setupPieNode(true, Math.min(10, this.dividend + 1), this.divisor);
+                  var extraSourceSources = extraSourceSourcesArray[0];
+                  extraSourceSources.setPosition(this.pieSourceNodePosition);
+                  this.extraSourceNode.addChild(extraSourceSources);
+                  var extraPies = extraSourceSourcesArray[1];
+                  extraPies[extraPies.length - 1].setOpacity(128);
+
+                  var extraSourceHolesArray = this.setupPieNode(false, Math.min(10, this.dividend + 1), this.divisor);
+                  var extraSourceHoles = extraSourceHolesArray[0];
+                  extraSourceHoles.setPosition(this.pieHoleNodePosition);
+                  this.extraSourceNode.addChild(extraSourceHoles);
+
+                  this.extraHoleNode = new cc.Node();
+                  this.mainNode.addChild(this.extraHoleNode);
+                  this.extraHoleNode.setPosition(this.pieHoleNodePosition);
+                  this.extraHoleNode.setVisible(false);
+
+                  var extraHoleSourcesArray = this.setupPieNode(true, this.dividend, Math.min(10, this.divisor + 1));
+                  var extraHoleSources = extraHoleSourcesArray[0];
+                  extraHoleSources.setPosition(this.pieSourceNodePosition);
+                  this.extraHoleNode.addChild(extraHoleSources);
+
+                  var extraHoleHolesArray = this.setupPieNode(false, this.dividend, Math.min(10, this.divisor + 1));
+                  var extraHoleHoles = extraHoleHolesArray[0];
+                  this.extraHoleNode.addChild(extraHoleHoles);
+                  extraHoleHoles.setPosition(this.pieHoleNodePosition);
+                  var extraHoles = extraHoleHolesArray[1];
+                  extraHoles[extraHoles.length - 1].setOpacity(128);
+            },
 
             setupPieNode:function(isSource) {
 
@@ -200,17 +238,19 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
             onTouchesBegan:function(touches, event) {
                   var touch = touches[0];
                   var touchLocation = this.convertTouchToNodeSpace(touch);
-                  var pies = this.pies();
-                  for (var i = 0; i < pies.length; i++) {
-                        var pie = pies[i];
-                        var selectedPiece = pie.processTouch(touchLocation);
-                        if (selectedPiece !== null) {
-                              this.movingPiePiece = new MovingPiePiece();
-                              this.movingPiePiece.setPiePiece(selectedPiece.section, selectedPiece.fraction);
-                              this.movingPiePiece.setPosition(cc.pSub(touchLocation, this.movingPiePiece.dragPoint));
-                              this.addChild(this.movingPiePiece);
-                              this.selectedPie = pie;
-                              break;
+                  if (this.splitted) {
+                        var pies = this.pies();
+                        for (var i = 0; i < pies.length; i++) {
+                              var pie = pies[i];
+                              var selectedPiece = pie.processTouch(touchLocation);
+                              if (selectedPiece !== null) {
+                                    this.movingPiePiece = new MovingPiePiece();
+                                    this.movingPiePiece.setPiePiece(selectedPiece.section, selectedPiece.fraction);
+                                    this.movingPiePiece.setPosition(cc.pSub(touchLocation, this.movingPiePiece.dragPoint));
+                                    this.addChild(this.movingPiePiece);
+                                    this.selectedPie = pie;
+                                    break;
+                              };
                         };
                   };
             },
@@ -252,14 +292,14 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   }
             },
 
-            setupDragPieSourceButton:function() {
+            setupDragPieButton:function(isSource) {
                   var self = this;
 
-                  var dragSourceDummyButton = new cc.Sprite();
-                  dragSourceDummyButton.initWithFile(window.bl.getResource('drag_pie'));
+                  var dragDummyButton = new cc.Sprite();
+                  dragDummyButton.initWithFile(window.bl.getResource('drag_pie'));
                   var position = cc.p(52, 143);
-                  dragSourceDummyButton.setPosition(position);
-                  this.dragOnTabs.addChild(dragSourceDummyButton);
+                  dragDummyButton.setPosition(position);
+                  this.dragOnTabs.addChild(dragDummyButton);
 
                   var dragSourceButton = new Draggable();
                   this.dragSourceButton = dragSourceButton;
@@ -273,6 +313,8 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   dragSourceButton.setVisible(false);
                   dragSourceButton.alreadyTouched = false;
 
+                  var extraVisible = false;
+
                   var startDraggablePie = function() {
                         var scaleUp = cc.ScaleTo.create(0.3, 1);
                         this.runAction(scaleUp);
@@ -283,16 +325,30 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   var moveDraggablePie = function() {
                         if (cc.rectContainsPoint(self.pieSourceNode.getBoundingBox(), dragSourceButton.getPosition())) {
                               console.log("INSIDE!");
+                              if (!extraVisible) {
+                                    self.currentPiesNode.setVisible(false);
+                                    self.extraSourceNode.setVisible(true);
+                                    extraVisible = true;
+                              };
                         } else {
-                              console.log("OUTSIDE!");
+                              if (extraVisible) {
+                                    self.currentPiesNode.setVisible(true);
+                                    self.extraSourceNode.setVisible(false);
+                                    extraVisible = false;
+                              };
                         };
                   };
                   dragSourceButton.onMoved(moveDraggablePie);
 
                   var stopDraggablePie = function() {
+                        if (extraVisible) {
+                              self.resetMainNodeWithNumbers(self.dividend + 1, self.divisor);
+                        };
+
                         this.returnToHomePosition();
                         this.setScale(0.5);
                         this.setVisible(false);
+
                   };
                   dragSourceButton.onMoveEnded(stopDraggablePie);
             },

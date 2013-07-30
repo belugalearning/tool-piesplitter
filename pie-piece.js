@@ -52,6 +52,10 @@ define(['canvasclippingnode'], function(CanvasClippingNode) {
 			return inPoint;
 		},
 
+		setOpacity:function(opacity) {
+			this.piePieceBackground.setOpacity(opacity);
+		},
+
 	})
 
 	return PiePiece;

@@ -12,6 +12,7 @@ define(['pie', 'piepiece'], function(Pie, PiePiece) {
 			var fullPiePiece = new PiePiece();
 			this.piePieceNode.addChild(fullPiePiece);
 			fullPiePiece.setPiePiece(1,1);
+			this.piePieces.push(fullPiePiece);
 		},
 
 		addPiePiece:function() {
