@@ -35,16 +35,16 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   clc.addChild(background);
                   this.addChild(clc,0);
 
-                  this.prefill = false;
+                  this.prefill = true;
 
-                  this.questionDividend = 3;
-                  this.questionDivisor = 4;
+                  this.questionDividend = 1;
+                  this.questionDivisor = 2;
 
                   this.dividend = this.prefill ? this.questionDividend : 0;
                   this.divisor = this.prefill ? this.questionDivisor : 0;
                   this.splitted;
-                  this.pieSourceNodePosition = cc.p(130, 320);
-                  this.pieHoleNodePosition = cc.p(130, 60);
+                  this.pieSourceNodePosition = cc.p(130, 390);
+                  this.pieHoleNodePosition = cc.p(130, 110);
 
                   this.movingPiePiece = null;
                   this.selectedPie = null;
@@ -52,12 +52,12 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   var dragOnTabs = new cc.Sprite();
                   this.dragOnTabs = dragOnTabs;
                   dragOnTabs.initWithFile(window.bl.getResource('drag_tabs'));
-                  dragOnTabs.setPosition(dragOnTabs.getContentSize().width/2, 450);
+                  dragOnTabs.setPosition(dragOnTabs.getContentSize().width/2, 550);
                   this.addChild(dragOnTabs);
 
                   var questionBox = new cc.Sprite();
                   questionBox.initWithFile(window.bl.getResource('question_tray'));
-                  questionBox.setPosition(size.width/2, 610);
+                  questionBox.setPosition(size.width/2, 710);
                   this.addChild(questionBox);
 
                   this.questionLabel = new cc.LabelTTF.create(this.questionDividend + " divided by " + this.questionDivisor, "mikadoBold", 40);
@@ -66,7 +66,7 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
 
                   var menuBackground = new cc.Sprite();
                   menuBackground.initWithFile(window.bl.getResource('button_tabs'));
-                  menuBackground.setPosition(size.width - menuBackground.getContentSize().width/2, 450);
+                  menuBackground.setPosition(size.width - menuBackground.getContentSize().width/2, 550);
                   this.addChild(menuBackground);
 
                   var resetUnpressedTexture = window.bl.getResource('reset_button');
@@ -193,7 +193,7 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                         rowsNode.addChild(pieRowNodes[i]);
                   };
 
-                  pieNode.setContentSize(cc.SizeMake(800, 230));
+                  pieNode.setContentSize(cc.SizeMake(800, 1000));
 
                   return [pieNode, pieArray];
             },
