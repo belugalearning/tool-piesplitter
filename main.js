@@ -397,11 +397,12 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                         this.questionDividend = settings.dividend;
                         this.questionDivisor = settings.divisor;
                         this.prefill = settings.prefill;
-                        this.questionLabel.setString(this.questionDividend + " divided by " + this.questionDivisor);
                         if (this.prefill) {
                               this.resetMainNodeWithNumbers(settings.dividend, settings.divisor);
+                              this.questionLabel.setString(this.questionDividend + " divided by " + this.questionDivisor);
                         } else {
                               this.resetMainNodeWithNumbers(0,0);
+                              this.questionLabel.setString("");
                         };
                         settings.needToChange = false;
                   };
