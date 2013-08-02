@@ -55,14 +55,14 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   dragOnTabs.setPosition(dragOnTabs.getContentSize().width/2, 550);
                   this.addChild(dragOnTabs);
 
-                  var questionBox = new cc.Sprite();
-                  questionBox.initWithFile(window.bl.getResource('question_tray'));
-                  questionBox.setPosition(size.width/2, 710);
-                  this.addChild(questionBox);
+                  this.questionBox = new cc.Sprite();
+                  this.questionBox.initWithFile(window.bl.getResource('question_tray'));
+                  this.questionBox.setPosition(size.width/2, 710);
+                  this.addChild(this.questionBox);
 
                   this.questionLabel = new cc.LabelTTF.create(this.questionDividend + " divided by " + this.questionDivisor, "mikadoBold", 40);
-                  this.questionLabel.setPosition(cc.pAdd(questionBox.getAnchorPointInPoints(), cc.p(0, 4)));
-                  questionBox.addChild(this.questionLabel);
+                  this.questionLabel.setPosition(cc.pAdd(this.questionBox.getAnchorPointInPoints(), cc.p(0, 4)));
+                  this.questionBox.addChild(this.questionLabel);
 
                   var menuBackground = new cc.Sprite();
                   menuBackground.initWithFile(window.bl.getResource('button_tabs'));
@@ -397,12 +397,13 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                         this.questionDividend = settings.dividend;
                         this.questionDivisor = settings.divisor;
                         this.prefill = settings.prefill;
+                        this.questionLabel.setString(this.questionDividend + " divided by " + this.questionDivisor);
                         if (this.prefill) {
                               this.resetMainNodeWithNumbers(settings.dividend, settings.divisor);
-                              this.questionLabel.setString(this.questionDividend + " divided by " + this.questionDivisor);
+                              this.questionBox.setVisible(true);
                         } else {
                               this.resetMainNodeWithNumbers(0,0);
-                              this.questionLabel.setString("");
+                              this.questionBox.setVisible(false);
                         };
                         settings.needToChange = false;
                   };
