@@ -49,12 +49,6 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   this.movingPiePiece = null;
                   this.selectedPie = null;
 
-                  var dragOnTabs = new cc.Sprite();
-                  this.dragOnTabs = dragOnTabs;
-                  dragOnTabs.initWithFile(window.bl.getResource('drag_tabs'));
-                  dragOnTabs.setPosition(dragOnTabs.getContentSize().width/2, 550);
-                  this.addChild(dragOnTabs);
-
                   this.questionBox = new cc.Sprite();
                   this.questionBox.initWithFile(window.bl.getResource('question_tray'));
                   this.questionBox.setPosition(size.width/2, 710);
@@ -144,11 +138,20 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   var extraHoles = extraHoleHolesArray[1];
                   extraHoles[extraHoles.length - 1].setOpacity(128);
 
+                  var dragOnTabs = new cc.Sprite();
+                  this.dragOnTabs = dragOnTabs;
+                  dragOnTabs.initWithFile(window.bl.getResource('drag_tabs'));
+                  dragOnTabs.setPosition(dragOnTabs.getContentSize().width/2, 550);
+                  this.mainNode.addChild(dragOnTabs);
+
                   this.dragSourceButton = this.setupDragPieButton(true);
                   this.dragHoleButton = this.setupDragPieButton(false);
                   if (this.prefill) {
+                        dragOnTabs.setVisible(false);
                         this.dragSourceButton.setUseable(false);
                         this.dragHoleButton.setUseable(false);
+                        this.dragSourceButton.dummyButton.setVisible(false);
+                        this.dragHoleButton.dummyButton.setVisible(false);
                   };
 
 
@@ -316,6 +319,7 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   var dragDummyButton = new cc.Sprite();
                   dragDummyButton.initWithFile(window.bl.getResource(filename));
                   dragDummyButton.setPosition(correctedPosition);
+                  dragDummyButton.setZOrder(200);
                   this.mainNode.addChild(dragDummyButton);
 
                   var dragButton = new Draggable();
