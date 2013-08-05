@@ -8,11 +8,12 @@ require.config({
             'piesource': '../../tools/piesplitter/pie-source',
             'piehole': '../../tools/piesplitter/pie-hole',
             'piesplittersettingslayer': '../../tools/piesplitter/pie-splitter-settings-layer',
-            'buttonsprite': '../../tools/common/button-sprite'
+            'buttonsprite': '../../tools/common/button-sprite',
+            'fractionlabel': '../../tools/piesplitter/fraction-label'
 	}
 });
 
-define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplittersettingslayer', 'blbutton', 'draggable', 'exports', 'cocos2d', 'toollayer', 'qlayer'], function(Pie, PiePiece, MovingPiePiece, PieSource, PieHole, PieSplitterSettingsLayer, BLButton, Draggable, exports, cocos2d, ToolLayer, QLayer) {
+define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplittersettingslayer', 'fractionlabel', 'blbutton', 'draggable', 'exports', 'cocos2d', 'toollayer', 'qlayer'], function(Pie, PiePiece, MovingPiePiece, PieSource, PieHole, PieSplitterSettingsLayer, FractionLabel, BLButton, Draggable, exports, cocos2d, ToolLayer, QLayer) {
 	'use strict';
 
 	window.bl.toolTag = 'piesplitter';
@@ -186,7 +187,7 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
 
                   for (var i = 0; i < numberOfPies; i++) {
                         var pie = new pieClass();
-                        pie.numberOfPieces = this.divisor;
+                        pie.setNumberOfPieces(this.divisor);
                         pieArray.push(pie);
                   };
 

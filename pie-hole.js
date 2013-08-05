@@ -1,4 +1,4 @@
-define(['pie', 'piepiece'], function(Pie, PiePiece) {
+define(['pie', 'piepiece', 'fractionlabel'], function(Pie, PiePiece, FractionLabel) {
 	'use strict';
 
 	var PieHole = Pie.extend({
@@ -8,6 +8,15 @@ define(['pie', 'piepiece'], function(Pie, PiePiece) {
 			this._super();
 
 			this.miniPies = [];
+
+			this.fractionLabel = new FractionLabel();
+			this.fractionLabel.setPosition(this.pieCover.getContentSize().width/2, this.pieCover.getContentSize().height/2);
+			this.addChild(this.fractionLabel);
+		},
+
+		setNumberOfPieces:function(numberOfPieces) {
+			this._super(numberOfPieces);
+			this.fractionLabel.setFraction(0, 0, this.numberOfPieces);
 		},
 
 		addPiePiece:function() {
@@ -17,13 +26,13 @@ define(['pie', 'piepiece'], function(Pie, PiePiece) {
 				this.addMiniPie();
 			};
 			this._super();
+			this.setLabel();
 			return true;
 		},
 
 		addMiniPie:function() {
 			var miniPie = new cc.Sprite();
 			miniPie.initWithFile(window.bl.getResource('small_bubble'));
-			miniPie.setPosition(0, -(this.miniPies.length * 40 + 75));
 			this.miniPies.push(miniPie);
 			this.addChild(miniPie);
 			this.positionMiniPies();
@@ -35,6 +44,7 @@ define(['pie', 'piepiece'], function(Pie, PiePiece) {
 				this.removeMiniPie();
 				this.fillPie();
 			};
+			this.setLabel();
 		},
 
 		removeMiniPie:function() {
@@ -49,7 +59,7 @@ define(['pie', 'piepiece'], function(Pie, PiePiece) {
 			var baseAngle = Math.PI + (numberOfPies-1)/2 * -spacingAngle;
 			var pieRadius = this.pieCover.getBoundingBox().size.width/2;
 			var miniPieRadius = this.miniPies.length > 0 ? this.miniPies[0].getBoundingBox().size.width/2 : 0;
-			var radius = pieRadius + miniPieRadius + 3;
+			var radius = pieRadius + miniPieRadius + 6;
 			for (var i = 0; i < numberOfPies; i++) {
 				var angle = baseAngle + i * spacingAngle;
 				var xPosition = radius * Math.sin(angle);
@@ -57,6 +67,14 @@ define(['pie', 'piepiece'], function(Pie, PiePiece) {
 				var miniPie = this.miniPies[i];
 				miniPie.setPosition(xPosition, yPosition);
 			};
+		},
+
+		setLabel:function() {
+			var another = this.piePieces.length === this.numberOfPieces;
+			var whole = another ? this.miniPies.length + 1 : this.miniPies.length;
+			var numerator = another ? 0 : this.piePieces.length;
+			var denominator = this.numberOfPieces;
+			this.fractionLabel.setFraction(whole, numerator, denominator);
 		},
 
 		getNumerator:function() {

@@ -83,6 +83,9 @@ define(['piepiece'], function(PiePiece) {
 			};
 		},
 
+		setNumberOfPieces:function(numberOfPieces) {
+			this.numberOfPieces = numberOfPieces;
+		},
 	})
 
 	return Pie
