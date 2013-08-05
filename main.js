@@ -326,10 +326,28 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                         var positionY = pie.homePosition.y - weighting * range;
                         var moveAction = cc.MoveTo.create(0.3, cc.p(pie.homePosition.x, positionY));
                         var sequence;
+                        if (i === 0) {
+                              var callFlash = cc.CallFunc.create(this.flashIfCorrect, this);
+                              sequence = cc.Sequence.create(moveAction, callFlash);
+                        } else {
                               sequence = cc.Sequence.create(moveAction);
+                        };
                         pie.runAction(sequence);
                   };
             },
+
+            flashIfCorrect:function() {
+                  var self = this;
+                  var correct = _.all(self.pieHoles, function(pieHole) {
+                        return pieHole.getNumerator() === self.pieSources.length;
+                  });
+                  if (correct) {
+                        for (var i = 0; i < this.pieHoles.length; i++) {
+                              this.pieHoles[i].flashGreen(0.5);
+                        };
+                  };
+            },
+
             setupDragPieButton:function(isSource) {
                   var filename = isSource ? 'drag_pie' : 'drag_bubble';
                   var position = isSource ? cc.p(52, 143) : cc.p(62, 55);

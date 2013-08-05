@@ -62,6 +62,26 @@ define(['pie', 'piepiece'], function(Pie, PiePiece) {
 		getNumerator:function() {
 			return this.piePieces.length + this.miniPies.length * this.numberOfPieces;
 		},
+
+		flashGreen:function(duration) {
+
+			var flashGreenAction = function() {
+				var tint = cc.TintBy.create(duration/2, -255, 0, -255);
+				var untint = tint.reverse();
+				var flashGreen = cc.Sequence.create(tint, untint);
+				return flashGreen;
+			};
+
+			for (var i = 0; i < this.piePieces.length; i++) {
+				var flashGreen = flashGreenAction();
+				this.piePieces[i].piePieceBackground.runAction(flashGreen);
+			};
+			for (var i = 0; i < this.miniPies.length; i++) {
+				var	flashGreen = flashGreenAction();
+				this.miniPies[i].runAction(flashGreen);
+			};
+		},
+
 	})
 
 	return PieHole;
