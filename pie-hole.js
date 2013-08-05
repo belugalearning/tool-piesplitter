@@ -59,6 +59,9 @@ define(['pie', 'piepiece'], function(Pie, PiePiece) {
 			};
 		},
 
+		getNumerator:function() {
+			return this.piePieces.length + this.miniPies.length * this.numberOfPieces;
+		},
 	})
 
 	return PieHole;

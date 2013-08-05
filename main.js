@@ -25,6 +25,9 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
 
 			this.setTouchEnabled(true);
 
+                  this.pieSources;
+                  this.pieHoles;
+
                   this.size = cc.Director.getInstance().getWinSize();
                   var size = this.size;
 
@@ -92,6 +95,8 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
             setupMainNode:function() {
                   this.currentPiesNode = new cc.Node();
                   this.mainNode.addChild(this.currentPiesNode);
+                  this.pieSources = [];
+                  this.pieHoles = [];
 
                   var pieSourceReturnArray = this.setupPieNode(true, this.dividend, this.divisor);
                   this.pieSourceNode = pieSourceReturnArray[0];
@@ -168,9 +173,10 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
             setupPieNode:function(isSource, dividend, divisor) {
                   var pieClass = isSource ? PieSource : PieHole
                   var pieArray = [];
+                  var arrayToSet = isSource ? this.pieSources : this.pieHoles;
                   var pieRowNodes = [];
                   var numberOfPies = isSource ? dividend : divisor;
-                  var verticalSpacing = isSource ? 130 : 150;
+                  var verticalSpacing = isSource ? 130 : 180;
                   var horizontalSpacing = 170;
 
                   var pieNode = new cc.Node();
@@ -196,7 +202,13 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                         rowsNode.addChild(pieRowNodes[i]);
                   };
 
+                  for (var i = 0; i < pieArray.length; i++) {
+                        pieArray[i].homePosition = pieArray[i].getPosition();
+                  };
+
                   pieNode.setContentSize(cc.SizeMake(800, 1000));
+
+                  arrayToSet = pieArray;
 
                   return [pieNode, pieArray];
             },
@@ -294,6 +306,7 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                                                 this.selectedPie.removeSelectedPiePiece();
                                                 droppedInPieHole = true;
                                           };
+                                          this.weighPieHoles();
                                           break;
                                     }
                               };
@@ -305,6 +318,18 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   }
             },
 
+            weighPieHoles:function() {
+                  var range = 30;
+                  for (var i = 0; i < this.pieHoles.length; i++) {
+                        var pie = this.pieHoles[i];
+                        var weighting = Math.min(pie.getNumerator(), 2 * this.pieSources.length)/(2 * this.pieSources.length);
+                        var positionY = pie.homePosition.y - weighting * range;
+                        var moveAction = cc.MoveTo.create(0.3, cc.p(pie.homePosition.x, positionY));
+                        var sequence;
+                              sequence = cc.Sequence.create(moveAction);
+                        pie.runAction(sequence);
+                  };
+            },
             setupDragPieButton:function(isSource) {
                   var filename = isSource ? 'drag_pie' : 'drag_bubble';
                   var position = isSource ? cc.p(52, 143) : cc.p(62, 55);
