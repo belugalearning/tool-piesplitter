@@ -1,7 +1,7 @@
 define(['piepiece'], function(PiePiece) {
 	'use strict';
 
-	var Pie = cc.Node.extend({
+	var Pie = cc.Sprite.extend({
 
 		ctor:function() {
 			this._super();
@@ -9,24 +9,23 @@ define(['piepiece'], function(PiePiece) {
 			this.numberOfPieces;
 			this.selectedPiece = null;
 
-			this.pieCover = new cc.Sprite();
-			this.pieCover.initWithFile(window.bl.getResource(this.pieCoverFilename));
-			this.pieCover.setZOrder(1);
-			this.addChild(this.pieCover);
+			this.initWithFile(window.bl.getResource(this.pieCoverFilename));
+			this.setZOrder(1);
 
 			this.piePieceNode = new cc.Node();
+			this.piePieceNode.setZOrder(-1);
 			this.addChild(this.piePieceNode);
 
-			this.setContentSize(this.pieCover.getContentSize());
-			this.setAnchorPoint(cc.pNeg(this.pieCover.getAnchorPoint()));
+			this.setContentSize(this.getContentSize());
+			// this.setAnchorPoint(cc.pNeg(this.getAnchorPoint()));
 
 		},
 
 		processTouch:function(touchLocation) {
 			var pieceSelected = null;
-			var touchRelative = this.pieCover.convertToNodeSpace(touchLocation);
-			var radius = this.pieCover.getBoundingBox().size.width/2;
-			var centre = this.pieCover.getAnchorPointInPoints();
+			var touchRelative = this.convertToNodeSpace(touchLocation);
+			var radius = this.getBoundingBox().size.width/2;
+			var centre = this.getAnchorPointInPoints();
 			if (cc.pDistance(touchRelative, centre) < radius) {
 				var xDifference = touchRelative.x - centre.x;
 				var yDifference = touchRelative.y - centre.y;
@@ -77,7 +76,7 @@ define(['piepiece'], function(PiePiece) {
 		},
 
 		setOpacity:function(opacity) {
-			this.pieCover.setOpacity(opacity);
+			this._super(opacity);
 			for (var i = 0; i < this.piePieces.length; i++) {
 				this.piePieces[i].setOpacity(opacity);
 			};

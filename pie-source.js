@@ -7,12 +7,12 @@ define(['pie', 'piepiece'], function(Pie, PiePiece) {
 		ctor:function() {
 			this._super();
 
-			this.pieCover.setPosition(0, -3);
-
 			var fullPiePiece = new PiePiece();
 			this.piePieceNode.addChild(fullPiePiece);
 			fullPiePiece.setPiePiece(1,1);
 			this.piePieces.push(fullPiePiece);
+
+			this.piePieceNode.setPosition(cc.pAdd(this.getAnchorPointInPoints(), cc.p(0, 3)));
 		},
 
 		addPiePiece:function() {

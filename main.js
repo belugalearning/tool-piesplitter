@@ -302,7 +302,7 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                               var pies = this.pies();
                               for (var i = 0; i < pies.length; i++) {
                                     var pie = pies[i];
-                                    if (pie.pieCover.touched(touchLocation)) {
+                                    if (pie.touched(touchLocation)) {
                                           if (pie.addPiePiece(this.movingPiePiece.fraction)) {
                                                 this.selectedPie.removeSelectedPiePiece();
                                                 droppedInPieHole = true;
@@ -363,16 +363,15 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   var dragDummyButton = new cc.Sprite();
                   dragDummyButton.initWithFile(window.bl.getResource(filename));
                   dragDummyButton.setPosition(correctedPosition);
-                  dragDummyButton.setZOrder(200);
+                  dragDummyButton.setZOrder(199);
                   this.mainNode.addChild(dragDummyButton);
 
                   var dragButton = new Draggable();
                   this.dragButton = dragButton;
-                  var movingPieSource = new classToCreate();
-                  dragButton.initWithSprite(movingPieSource);
-                  var position = this.dragOnTabs.convertToWorldSpace(position);
+                  var movingPie = new classToCreate();
+                  dragButton.initWithSprite(movingPie);
                   dragButton.setPosition(correctedPosition);
-                  dragButton.setScale(0.5);
+                  dragButton.getCurrentBackgroundSprite().setScale(0.5);
                   this.mainNode.addChild(dragButton);
                   dragButton.setZoomOnTouchDown(false);
                   dragButton.setVisible(false);
@@ -383,8 +382,8 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
 
                   var startDraggablePie = function() {
                         var scaleUp = cc.ScaleTo.create(0.3, 1);
-                        this.setZOrder(1);
-                        this.runAction(scaleUp);
+                        this.setZOrder(200);
+                        this.getCurrentBackgroundSprite().runAction(scaleUp);
                         this.setVisible(true);
                   };
                   dragButton.onTouchDown(startDraggablePie);
@@ -425,7 +424,7 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                         this.returnToHomePosition();
                         this.setScale(0.5);
                         this.setVisible(false);
-
+                        this.setZOrder(1);
                   };
                   dragButton.onMoveEnded(stopDraggablePie);
 

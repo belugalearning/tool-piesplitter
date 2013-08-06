@@ -12,6 +12,7 @@ define(['pie', 'piepiece', 'fractionlabel'], function(Pie, PiePiece, FractionLab
 			this.fractionLabel = new FractionLabel();
 			this.fractionLabel.setPosition(this.pieCover.getContentSize().width/2, this.pieCover.getContentSize().height/2);
 			this.addChild(this.fractionLabel);
+			this.piePieceNode.setPosition(this.getAnchorPointInPoints());
 		},
 
 		setNumberOfPieces:function(numberOfPieces) {
@@ -57,13 +58,14 @@ define(['pie', 'piepiece', 'fractionlabel'], function(Pie, PiePiece, FractionLab
 			var spacingAngle = 2*Math.PI/9;
 			var numberOfPies = this.miniPies.length;
 			var baseAngle = Math.PI + (numberOfPies-1)/2 * -spacingAngle;
-			var pieRadius = this.pieCover.getBoundingBox().size.width/2;
+			var pieRadius = this.getBoundingBox().size.width/2;
 			var miniPieRadius = this.miniPies.length > 0 ? this.miniPies[0].getBoundingBox().size.width/2 : 0;
+			var centre = this.getAnchorPointInPoints();
 			var radius = pieRadius + miniPieRadius + 6;
 			for (var i = 0; i < numberOfPies; i++) {
 				var angle = baseAngle + i * spacingAngle;
-				var xPosition = radius * Math.sin(angle);
-				var yPosition = radius * Math.cos(angle);
+				var xPosition = centre.x + radius * Math.sin(angle);
+				var yPosition = centre.y + radius * Math.cos(angle);
 				var miniPie = this.miniPies[i];
 				miniPie.setPosition(xPosition, yPosition);
 			};
