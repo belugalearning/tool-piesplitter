@@ -47,8 +47,8 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   this.dividend = this.prefill ? this.questionDividend : 0;
                   this.divisor = this.prefill ? this.questionDivisor : 0;
                   this.splitted;
-                  this.pieSourceNodePosition = cc.p(190, 390);
-                  this.pieHoleNodePosition = cc.p(190, 110);
+                  this.pieSourceNodePosition = cc.p(190, 450);
+                  this.pieHoleNodePosition = cc.p(190, 160);
 
                   this.movingPiePiece = null;
                   this.selectedPie = null;
