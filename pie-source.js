@@ -12,7 +12,9 @@ define(['pie', 'piepiece'], function(Pie, PiePiece) {
 			fullPiePiece.setPiePiece(1,1);
 			this.piePieces.push(fullPiePiece);
 
-			this.piePieceNode.setPosition(cc.pAdd(this.getAnchorPointInPoints(), cc.p(0, 3)));
+			var innerPosition = cc.pAdd(this.getAnchorPointInPoints(), cc.p(0,3));
+			this.piePieceNode.setPosition(innerPosition);
+			this.fullPieHighlight.setPosition(this.getAnchorPointInPoints());
 		},
 
 		addPiePiece:function() {

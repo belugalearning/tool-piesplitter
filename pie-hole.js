@@ -14,8 +14,11 @@ define(['pie', 'piepiece', 'fractionlabel'], function(Pie, PiePiece, FractionLab
 			this.addChild(this.fractionLabel);
 			this.fractionLabel.setVisible(false);
 			this.fractionLabel.setZOrder(10);
+			
+			var innerPosition = this.getAnchorPointInPoints();
+			this.piePieceNode.setPosition(innerPosition);
+			this.fullPieHighlight.setPosition(this.getAnchorPointInPoints());
 
-			this.piePieceNode.setPosition(this.getAnchorPointInPoints());
 		},
 
 		setNumberOfPieces:function(numberOfPieces) {
@@ -105,7 +108,6 @@ define(['pie', 'piepiece', 'fractionlabel'], function(Pie, PiePiece, FractionLab
 				this.miniPies[i].runAction(flashGreen);
 			};
 		},
-
 	})
 
 	return PieHole;

@@ -17,7 +17,12 @@ define(['piepiece'], function(PiePiece) {
 			this.addChild(this.piePieceNode);
 
 			this.setContentSize(this.getContentSize());
-			// this.setAnchorPoint(cc.pNeg(this.getAnchorPoint()));
+
+			this.fullPieHighlight = new cc.Sprite();
+			this.fullPieHighlight.initWithFile(window.bl.getResource('slice1'));
+			this.fullPieHighlight.setOpacity(128);
+			this.addChild(this.fullPieHighlight);
+			this.fullPieHighlight.setVisible(false);
 
 		},
 
@@ -85,6 +90,11 @@ define(['piepiece'], function(PiePiece) {
 		setNumberOfPieces:function(numberOfPieces) {
 			this.numberOfPieces = numberOfPieces;
 		},
+
+		setHighlight:function(highlight) {
+			this.fullPieHighlight.setVisible(highlight);
+		},
+
 	})
 
 	return Pie

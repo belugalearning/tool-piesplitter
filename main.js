@@ -289,6 +289,10 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   var touchLocation = this.convertTouchToNodeSpace(touch);
                   if (this.movingPiePiece !== null) {
                         this.movingPiePiece.setPosition(cc.pSub(touchLocation, this.movingPiePiece.dragPoint));
+                        for (var i = 0; i < this.pies().length; i++) {
+                              var pie = this.pies()[i];
+                              pie.setHighlight(pie.touched(touchLocation));
+                        };
                   };
             },
 
@@ -302,6 +306,7 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                               var pies = this.pies();
                               for (var i = 0; i < pies.length; i++) {
                                     var pie = pies[i];
+                                    pie.setHighlight(false);
                                     if (pie.touched(touchLocation)) {
                                           if (pie.addPiePiece(this.movingPiePiece.fraction)) {
                                                 this.selectedPie.removeSelectedPiePiece();
