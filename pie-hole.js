@@ -10,13 +10,17 @@ define(['pie', 'piepiece', 'fractionlabel'], function(Pie, PiePiece, FractionLab
 			this.miniPies = [];
 
 			this.fractionLabel = new FractionLabel();
-			this.fractionLabel.setPosition(this.pieCover.getContentSize().width/2, this.pieCover.getContentSize().height/2);
+			this.fractionLabel.setPosition(this.getContentSize().width, this.getContentSize().height);
 			this.addChild(this.fractionLabel);
+			this.fractionLabel.setVisible(false);
+			this.fractionLabel.setZOrder(10);
+
 			this.piePieceNode.setPosition(this.getAnchorPointInPoints());
 		},
 
 		setNumberOfPieces:function(numberOfPieces) {
 			this._super(numberOfPieces);
+			this.fractionLabel.setVisible(true);
 			this.fractionLabel.setFraction(0, 0, this.numberOfPieces);
 		},
 
