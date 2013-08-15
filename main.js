@@ -53,14 +53,9 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                   this.movingPiePiece = null;
                   this.selectedPie = null;
 
-                  this.questionBox = new cc.Sprite();
-                  this.questionBox.initWithFile(window.bl.getResource('question_tray'));
-                  this.questionBox.setPosition(size.width/2, 710);
-                  this.addChild(this.questionBox);
-
-                  this.questionLabel = new cc.LabelTTF.create(this.questionDividend + " divided by " + this.questionDivisor, "mikadoBold", 40);
-                  this.questionLabel.setPosition(cc.pAdd(this.questionBox.getAnchorPointInPoints(), cc.p(0, 4)));
-                  this.questionBox.addChild(this.questionLabel);
+                  this.setQuestion({
+                        'text': this.questionDividend + " divided by " + this.questionDivisor
+                  });
 
                   var menuBackground = new cc.Sprite();
                   menuBackground.initWithFile(window.bl.getResource('button_tabs'));
@@ -449,13 +444,15 @@ define(['pie', 'piepiece', 'movingpiepiece', 'piesource', 'piehole', 'piesplitte
                         this.questionDividend = settings.dividend;
                         this.questionDivisor = settings.divisor;
                         this.prefill = settings.prefill;
-                        this.questionLabel.setString(this.questionDividend + " divided by " + this.questionDivisor);
+                        this.setQuestion({
+                              'text': this.questionDividend + " divided by " + this.questionDivisor
+                        });
                         if (this.prefill) {
                               this.resetMainNodeWithNumbers(settings.dividend, settings.divisor);
-                              this.questionBox.setVisible(true);
+                              this.showQuestion();
                         } else {
                               this.resetMainNodeWithNumbers(0,0);
-                              this.questionBox.setVisible(false);
+                              this.hideQuestion();
                         };
                         settings.needToChange = false;
                   };
